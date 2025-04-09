@@ -1,0 +1,105 @@
+{%load static%}
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemBot - Chat với AI</title>
+    <link rel="stylesheet" href="{% static 'css/ChatDetail.css' %}">
+    <script src="{% static 'js/ChatDetail.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-Bvt8stdz1C9qoUa5PNkZVerkljkGQt.png" alt="MemRise Logo" class="memrise-logo">
+                </div>
+                <a href="#" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại trang chủ
+                </a>
+            </div>
+            <div class="header-right">
+                <h1>MemBot - vận hành bởi AI</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Messages -->
+            <div class="chat-messages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>[smiling] Good morning, what coffee would you like?</p>
+                        <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                </div>
+
+                <div class="message user-message">
+                    <div class="message-content">
+                        <p class="english">I would like a latte, please.</p>
+                        <p class="vietnamese">Tôi muốn một ly latte, làm ơn.</p>
+                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
+                    </div>
+                </div>
+
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>That sounds great! Would you like any sugar in your latte?</p>
+                        <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                    <div class="message-actions">
+                        <button class="translate-btn">
+                            <i class="fas fa-language"></i>
+                            <span>Dịch</span>
+                        </button>
+                        <div class="feedback-buttons">
+                            <button class="like-btn"><i class="fas fa-thumbs-up"></i></button>
+                            <button class="dislike-btn"><i class="fas fa-thumbs-down"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Suggestion Panel -->
+                <div class="suggestion-panel" id="suggestionPanel">
+                    <h3>Gợi ý trả lời</h3>
+                    <div class="suggestion-list">
+                        <div class="suggestion-item">
+                            <p>No, thank you. Just the latte, please.</p>
+                            <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
+                        </div>
+                        <div class="suggestion-item">
+                            <p>No, thank you. Just the latte.</p>
+                            <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <div class="message-counter">
+                <span>Tin nhắn còn lại: 7</span>
+            </div>
+            <div class="chat-input-area">
+                <div class="input-tools">
+                    <button class="tool-btn"><i class="fas fa-language"></i></button>
+                    <button class="tool-btn suggestion-btn">
+                        <i class="fas fa-lightbulb"></i> Gợi ý
+                    </button>
+                    <button class="tool-btn"><i class="fas fa-microphone"></i></button>
+                </div>
+                <div class="input-field">
+                    <input type="text" placeholder="Nhập tin nhắn của bạn...">
+                    <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

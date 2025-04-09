@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home',
     'homeUsers',
     'CustomAdmin',
+    'chat',
 ]
 
 MIDDLEWARE = [

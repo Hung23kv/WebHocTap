@@ -1,0 +1,166 @@
+{% load static %}
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemBot - Chat với AI</title>
+    <link rel="stylesheet" href="{% static 'css/ChatHome.css' %}">
+    <script src="{% static 'js/ChatHome.js' %}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+         <div class="left-nav">
+            <div class="logo">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-Bvt8stdz1C9qoUa5PNkZVerkljkGQt.png" alt="MemRise Logo" class="memrise-logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="far fa-file-alt"></i>
+                    </div>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="far fa-lightbulb"></i>
+                    </div>
+                    <span>Tình huống</span>
+                </a>
+                
+                <a href="#" class="nav-item active">
+                    <div class="nav-icon">
+                        <i class="far fa-comments"></i>
+                    </div>
+                    <span>Cuộc đối thoại</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="language-selector">
+                    <div class="flag-container">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Flag_of_the_United_Kingdom_%283-5%29.svg/1200px-Flag_of_the_United_Kingdom_%283-5%29.svg.png" alt="English" class="flag">
+                    </div>
+                </div>
+                <div class="header-title">
+                    <h1>MemBot - vận hành bởi AI</h1>
+                </div>
+                <div class="header-icons">
+                    <i class="fas fa-chart-bar"></i>
+                    <i class="fas fa-clipboard-list"></i>
+                    <div class="user-score">0</div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Description -->
+            <div class="chat-description">
+                <p>Chat với MemBot - hệt như đang nói chuyện với người bản địa! Được hỗ trợ bởi AI.</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="tab-btn active">Tất cả</button>
+                <button class="tab-btn">Nói chuyện</button>
+                <button class="tab-btn">Sứ mệnh</button>
+            </div>
+
+            <!-- Card Grid -->
+            <div class="card-grid">
+                <!-- Row 1 -->
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=3337&auto=format&fit=crop" alt="Cà phê">
+                        <span class="card-tag">Sứ mệnh</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Đặt mua loại cà phê yêu thích của bạn</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=3270&auto=format&fit=crop" alt="Quán cà phê">
+                        <span class="card-tag">Sứ mệnh</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Có Wi-Fi không?</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=3270&auto=format&fit=crop" alt="Ngôi nhà">
+                        <span class="card-tag">Nói chuyện</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Nói về nơi bạn sống</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1633613286991-611fe299c4be?q=80&w=3270&auto=format&fit=crop" alt="Dấu hỏi">
+                        <span class="card-tag">Sứ mệnh</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Yêu cầu trợ giúp</p>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?q=80&w=3270&auto=format&fit=crop" alt="Rượu vang">
+                        <span class="card-tag">Sứ mệnh</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Yêu cầu giới thiệu</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=3271&auto=format&fit=crop" alt="Khách sạn">
+                        <span class="card-tag">Nói chuyện</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Chào hỏi lễ tân khách sạn</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=3149&auto=format&fit=crop" alt="Bắt tay">
+                        <span class="card-tag">Nói chuyện</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Gặp gỡ ai đó tại công việc mới của bạn</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-image">
+                        <img src="https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?q=80&w=3270&auto=format&fit=crop" alt="Rượu vang">
+                        <span class="card-tag">Nói chuyện</span>
+                    </div>
+                    <div class="card-content">
+                        <p>Người mới bắt đầu: Chúng ta đi chơi tối nay nhé?</p>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
