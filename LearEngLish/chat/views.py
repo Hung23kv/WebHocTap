@@ -7,34 +7,51 @@ from django.db.models import Q
 def homeChat(request):
     data = Doithoai.objects.all()
     return render(request,'ChatHome.html',{"Listchat": data})
-def ChatDetail(request,idQ):
-    data = Thoai.objects.filter(id_doithoai=idQ).first()
-    id_user = Nguoidung.objects.get(pk=2)
-    id_Question = data.id
+def ChatDetail(request, idQ):
     
+    dataDoiThoai = Doithoai.objects.get(id=idQ)
+    
+   
+    cauhois = Thoai.objects.filter(id_doithoai=idQ).order_by('id')
+    
+    current_index = request.session.get('current_index', 0)
+    reply = request.session.get('reply', [])
+
     if request.method == 'POST':
-        Chattext = request.POST.get('ChatContent')
-        Date = date.today()
-        id_Ques = data.id
-        Nid_Ques = Traloi.objects.get(pk = id_Ques)
-        answer = Traloi.objects.create(id_nguoidung = id_user,id_cauhoi = Nid_Ques,ngaygui = Date,noidung = Chattext)
-        answer.save()
-        nextQues = Thoai.objects.filter(id_gt = data.id).order_by('id').first()
-        if nextQues:
-            return redirect('ChatDetail', idQ=nextQues.id)
-        else:
-            return render(request, 'ChatDetail.html', {
-                "Content": None,
-                
-                "done": True
+        user_answer = request.POST.get('ChatContent')
+
+        if current_index < cauhois.count():
+            current_question = cauhois[current_index]
+
+            reply.append({
+                'question': current_question.cauhoi,
+                'answer': user_answer
             })
-    return render(request,'ChatDetail.html',{"Content" :data, "chat" : get_chat_user(id_user,id_Question)   ,"done" : False })
-def get_chat_user(user, Question):
-    r = Traloi.objects.filter(Q(id_nguoidung=user) & Q(id_cauhoi=Question)).first()
-    reply = []
-    if r:
-        reply.append({
-            'question': r.id_cauhoi.cauhoi,
-            'answer': r.noidung
-        })
-    return reply
+
+           
+            request.session['reply'] = reply
+            request.session['current_index'] = current_index + 1
+
+           
+            if current_index + 1 < cauhois.count():
+                return redirect('detailChat', idQ=idQ)
+            else:
+                request.session.pop('reply', None)
+                request.session.pop('current_index', None)
+                return render(request, 'ChatDetail.html', {
+                    "Chat": dataDoiThoai,
+                    "chat": reply,
+                    "Content": None,
+                    "done": True
+                })
+
+    current_question = None
+    if current_index < cauhois.count():
+        current_question = cauhois[current_index]
+
+    return render(request, 'ChatDetail.html', {
+        "Chat": dataDoiThoai,
+        "chat": reply,
+        "Content": current_question,
+        "done": False
+    })

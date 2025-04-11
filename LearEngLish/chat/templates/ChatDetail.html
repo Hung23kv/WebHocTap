@@ -25,58 +25,59 @@
                 <h1>MemBot - vận hành bởi AI</h1>
             </div>
         </header>
-
+        <br>
+        <p class = "text" style = "text-align: center;
+    color: blue;">Mục tiêu: {{Chat.muctieu}}</p>
+        <!-- Main Content -->
         <!-- Main Content -->
         <main class="main-content">
             <!-- Chat Messages -->
-            {% for item in chat %}
             <div class="chat-messages">
+                {% for item in chat %}
                 <div class="message bot-message">
                     <div class="message-content">
-                        <p>{{item.question}}</p>
+                        <p>{{ item.question }}</p>
                         <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
                     </div>
-                    <br>
-                    <div class="message user-message">
-                            <div class="message-content">
-                                <p class="english">{{item.answer}}</p>
-                            </div>
+                </div>
+                <div class="message user-message">
+                    <div class="message-content">
+                        <p class="english">{{ item.answer }}</p>
                     </div>
                 </div>
-            {% endfor %}
-               
-            {% if Content %}
-                    <!-- Câu hỏi tiếp theo -->
-                    <div class="message bot-message">
-                        <div class="message-content">
-                            <p>{{ Content.cauhoi }}</p>
-                        </div>
-                    </div>
-                {% elif done %}
-                    <div class="message bot-message">
-                        <div class="message-content">
-                            <p>🎉 Bạn đã hoàn thành tất cả câu hỏi! Tuyệt vời!</p>
-                        </div>
-                    </div>
-                {% endif %}       
+                {% endfor %}
 
-                
-                <!-- Suggestion Panel -->
-                <div class="suggestion-panel" id="suggestionPanel">
-                    <h3>Gợi ý trả lời</h3>
-                    <div class="suggestion-list">
-                        <div class="suggestion-item">
-                            <p>No, thank you. Just the latte, please.</p>
-                            <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
-                        </div>
-                        <div class="suggestion-item">
-                            <p>No, thank you. Just the latte.</p>
-                            <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
-                        </div>
+                {% if Content %}
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>{{ Content.cauhoi }}</p>
+                    </div>
+                </div>
+                {% elif done %}
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p> Bạn đã hoàn thành tất cả câu hỏi! Tuyệt vời!</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div> <!-- đóng đúng div.chat-messages -->
+
+            <!-- Suggestion Panel -->
+            <div class="suggestion-panel" id="suggestionPanel">
+                <h3>Gợi ý trả lời</h3>
+                <div class="suggestion-list">
+                    <div class="suggestion-item">
+                        <p>No, thank you. Just the latte, please.</p>
+                        <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
+                    </div>
+                    <div class="suggestion-item">
+                        <p>No, thank you. Just the latte.</p>
+                        <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
                     </div>
                 </div>
             </div>
         </main>
+
 
         <!-- Chat Input -->
         <div class="chat-input-container">
