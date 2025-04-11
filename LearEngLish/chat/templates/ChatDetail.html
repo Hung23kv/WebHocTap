@@ -29,38 +29,37 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Chat Messages -->
+            {% for item in chat %}
             <div class="chat-messages">
                 <div class="message bot-message">
                     <div class="message-content">
-                        <p>[smiling] Good morning, what coffee would you like?</p>
+                        <p>{{item.question}}</p>
                         <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
                     </div>
-                </div>
-
-                <div class="message user-message">
-                    <div class="message-content">
-                        <p class="english">I would like a latte, please.</p>
-                        <p class="vietnamese">Tôi muốn một ly latte, làm ơn.</p>
-                        <button class="edit-btn"><i class="fas fa-pen"></i></button>
+                    <br>
+                    <div class="message user-message">
+                            <div class="message-content">
+                                <p class="english">{{item.answer}}</p>
+                            </div>
                     </div>
                 </div>
-
-                <div class="message bot-message">
-                    <div class="message-content">
-                        <p>That sounds great! Would you like any sugar in your latte?</p>
-                        <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
-                    </div>
-                    <div class="message-actions">
-                        <button class="translate-btn">
-                            <i class="fas fa-language"></i>
-                            <span>Dịch</span>
-                        </button>
-                        <div class="feedback-buttons">
-                            <button class="like-btn"><i class="fas fa-thumbs-up"></i></button>
-                            <button class="dislike-btn"><i class="fas fa-thumbs-down"></i></button>
+            {% endfor %}
+               
+            {% if Content %}
+                    <!-- Câu hỏi tiếp theo -->
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            <p>{{ Content.cauhoi }}</p>
                         </div>
                     </div>
-                </div>
+                {% elif done %}
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            <p>🎉 Bạn đã hoàn thành tất cả câu hỏi! Tuyệt vời!</p>
+                        </div>
+                    </div>
+                {% endif %}       
+
                 
                 <!-- Suggestion Panel -->
                 <div class="suggestion-panel" id="suggestionPanel">
@@ -92,10 +91,13 @@
                     </button>
                     <button class="tool-btn"><i class="fas fa-microphone"></i></button>
                 </div>
-                <div class="input-field">
-                    <input type="text" placeholder="Nhập tin nhắn của bạn...">
-                    <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
-                </div>
+                <form method = "post"> 
+                    {% csrf_token %}
+                    <div class="input-field">
+                        <input type="text" placeholder="Nhập tin nhắn của bạn..." name = "ChatContent">
+                    <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

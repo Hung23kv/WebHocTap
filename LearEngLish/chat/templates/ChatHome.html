@@ -74,87 +74,18 @@
 
             <!-- Card Grid -->
             <div class="card-grid">
-                <!-- Row 1 -->
-                <div class="card">
+
+                {% for item in Listchat%}
+                    <div class="card">
                     <div class="card-image">
                         <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=3337&auto=format&fit=crop" alt="Cà phê">
                         <span class="card-tag">Sứ mệnh</span>
                     </div>
                     <div class="card-content">
-                        <p>Người mới bắt đầu: Đặt mua loại cà phê yêu thích của bạn</p>
+                        <a href= "{% url 'detailChat' item.id  %}" style = "text-decoration: none;color: blue; ">{{item.tieude}}</a>
                     </div>
                 </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=3270&auto=format&fit=crop" alt="Quán cà phê">
-                        <span class="card-tag">Sứ mệnh</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Có Wi-Fi không?</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=3270&auto=format&fit=crop" alt="Ngôi nhà">
-                        <span class="card-tag">Nói chuyện</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Nói về nơi bạn sống</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1633613286991-611fe299c4be?q=80&w=3270&auto=format&fit=crop" alt="Dấu hỏi">
-                        <span class="card-tag">Sứ mệnh</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Yêu cầu trợ giúp</p>
-                    </div>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?q=80&w=3270&auto=format&fit=crop" alt="Rượu vang">
-                        <span class="card-tag">Sứ mệnh</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Yêu cầu giới thiệu</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=3271&auto=format&fit=crop" alt="Khách sạn">
-                        <span class="card-tag">Nói chuyện</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Chào hỏi lễ tân khách sạn</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=3149&auto=format&fit=crop" alt="Bắt tay">
-                        <span class="card-tag">Nói chuyện</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Gặp gỡ ai đó tại công việc mới của bạn</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-image">
-                        <img src="https://images.unsplash.com/photo-1504279577054-acfeccf8fc52?q=80&w=3270&auto=format&fit=crop" alt="Rượu vang">
-                        <span class="card-tag">Nói chuyện</span>
-                    </div>
-                    <div class="card-content">
-                        <p>Người mới bắt đầu: Chúng ta đi chơi tối nay nhé?</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
 
            

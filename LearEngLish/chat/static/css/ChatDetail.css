@@ -72,18 +72,6 @@ body {
     gap: 15px;
 }
 
-.message {
-    max-width: 80%;
-}
-
-.bot-message {
-    align-self: flex-start;
-}
-
-.user-message {
-    align-self: flex-end;
-}
-
 .message-content {
     position: relative;
     padding: 12px 15px;
