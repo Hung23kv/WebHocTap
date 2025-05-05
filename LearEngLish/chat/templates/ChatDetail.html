@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MemBot - Chat với AI</title>
     <link rel="stylesheet" href="{% static 'css/ChatDetail.css' %}">
-    <script src="{% static 'js/ChatDetail.js' %}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -16,13 +15,13 @@
                 <div class="logo">
                     <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-Bvt8stdz1C9qoUa5PNkZVerkljkGQt.png" alt="MemRise Logo" class="memrise-logo">
                 </div>
-                <a href="#" class="back-button">
+                <a href="{%url 'homeChat' %}" class="back-button">
                     <i class="fas fa-arrow-left"></i>
                     Quay lại trang chủ
                 </a>
             </div>
             <div class="header-right">
-                <h1>MemBot - vận hành bởi AI</h1>
+                <h1>Học tập tiếng anh giao tiếp</h1>
             </div>
         </header>
         <br>
@@ -45,6 +44,15 @@
                         <p class="english">{{ item.answer }}</p>
                     </div>
                 </div>
+
+                {% if item.suggestion %}
+                    <div class="message bot-message suggestion">
+                        <div class="message-content">
+                            <p>Gợi ý: {{ item.suggestion }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
                 {% endfor %}
 
                 {% if Content %}
@@ -57,6 +65,14 @@
                 <div class="message bot-message">
                     <div class="message-content">
                         <p> Bạn đã hoàn thành tất cả câu hỏi! Tuyệt vời!</p>
+                       <form method="post" action="{% url 'save' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="reply_data" value="{{ reply_data }}">
+                            <input type="hidden" name="chat_id" value="{{ Chat.id }}">
+                            <button type="submit" class="back-button">
+                                <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                            </button>
+                        </form>
                     </div>
                 </div>
                 {% endif %}
@@ -82,7 +98,7 @@
         <!-- Chat Input -->
         <div class="chat-input-container">
             <div class="message-counter">
-                <span>Tin nhắn còn lại: 7</span>
+                <span>Tin nhắn còn lại: {{remaining_questions}}</span>
             </div>
             <div class="chat-input-area">
                 <div class="input-tools">
@@ -94,6 +110,10 @@
                 </div>
                 <form method = "post"> 
                     {% csrf_token %}
+                    <!-- Lưu trữ dữ liệu qua hidden fields -->
+                <input type="hidden" name="current_index" value="{{ current_index }}">
+                <input type="hidden" name="reply_data" value="{{ reply_data }}">
+                
                     <div class="input-field">
                         <input type="text" placeholder="Nhập tin nhắn của bạn..." name = "ChatContent">
                     <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>

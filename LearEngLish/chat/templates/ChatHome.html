@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="header-title">
-                    <h1>MemBot - vận hành bởi AI</h1>
+                    <h1>Chat</h1>
                 </div>
                 <div class="header-icons">
                     <i class="fas fa-chart-bar"></i>
@@ -62,7 +62,7 @@
 
             <!-- Chat Description -->
             <div class="chat-description">
-                <p>Chat với MemBot - hệt như đang nói chuyện với người bản địa! Được hỗ trợ bởi AI.</p>
+                <p>Học tập tiếng anh giao tiếp qua các cuộc đối thoại</p>
             </div>
 
             <!-- Filter Tabs -->
@@ -70,7 +70,23 @@
                 <button class="tab-btn active">Tất cả</button>
                 <button class="tab-btn">Nói chuyện</button>
                 <button class="tab-btn">Sứ mệnh</button>
+                <button id="creatChat" style="width:50px;background-color: #00FF7F;margin-left: 200px;border-radius: 4px;border-color: #00FF7F;" type="button" class="btn btn-success">+</button>
             </div>
+            <dialog id="chatDialog" class="chat-dialog">
+                <div class="dialog-content">
+                    <h2>Tạo cuộc trò chuyện mới</h2>
+                    <form action="{% url 'create_chat' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Tiêu đề:</label>
+                            <input type="text" name="title" required>
+                        </div>
+                        <div class="dialog-buttons">
+                            <button type="submit" class="submit-btn">Tạo mới</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
 
             <!-- Card Grid -->
             <div class="card-grid">
@@ -86,12 +102,109 @@
                     </div>
                 </div>
                 {% endfor %}
-            </div>
-
-           
+            </div>    
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const openBtn = document.getElementById('creatChat');
+        const dialog = document.getElementById('chatDialog');
+
+        // Mở dialog khi click nút +
+        openBtn.addEventListener('click', function() {
+            dialog.showModal();
+        });
+
+        // Đóng dialog khi click bên ngoài
+        dialog.addEventListener('click', function(event) {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+    });
+    </script>
+
+    <style>
+        .chat-dialog {
+            padding: 0;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 500px;
+            max-width: 90%;
+
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+        }
+
+        .chat-dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .dialog-content {
+            padding: 20px;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn, .close-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            background-color: #00FF7F;
+            color: white;
+            flex: 1;
+        }
+
+        .close-btn {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .submit-btn:hover {
+            background-color: #00CC6A;
+        }
+
+        .close-btn:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 </body>
 </html>
