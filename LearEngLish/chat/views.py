@@ -1,16 +1,37 @@
 from django.shortcuts import render,redirect
 from .models import Doithoai,Thoai,Traloi,Nguoidung
 from datetime import date
+from django.contrib import messages
 import json
 
 # Create your views here.
 def homeChat(request):
     data = Doithoai.objects.all()
     return render(request,'ChatHome.html',{"Listchat": data})
+def Login(request):
+    if request.method == "POST":
+        EmailLog = request.POST.get('user')
+        password = request.POST.get('passw')
+        Log = Nguoidung.objects.filter(email = EmailLog,matkhau = password).first()
+        if Log:
+            request.session['name'] = Log.ten
+            role  = Log.quyen
+            role = role.strip()
+            request.session['role'] = role  
+            if role == 'admin':
+                return redirect('/admin/')
+            return redirect('homeChat')
+        else:
+            messages.error(request, 'Nhập sai thông tin tài khoản!')
+        
+    return render(request,'Login.html')
 def ChatDetail(request, id):
+    user = request.session.get('name')
+    if not user:
+        return redirect('Login')
     dataDoiThoai = Doithoai.objects.get(id=id)
     ngay = date.today().strftime('%Y-%m-%d')
-    id_user = 2 
+    id_user = Nguoidung.objects.get(ten = user) 
     cauhois = Thoai.objects.filter(id_doithoai=id).order_by('id')
     
     current_index = int(request.POST.get('current_index', 0))
@@ -24,7 +45,7 @@ def ChatDetail(request, id):
             
             reply.append({
                 'question': current_question.cauhoi,
-                'id_user': id_user,
+                'id_user': id_user.id,
                 'answer': user_answer,
                 'time': ngay,
                 'id_question': current_question.id,
@@ -51,7 +72,6 @@ def ChatDetail(request, id):
                     "reply_data": json.dumps(reply)
                 })
 
-    # Khởi tạo ban đầu
     return render(request, 'ChatDetail.html', {
         "Chat": dataDoiThoai,
         "chat": [],
@@ -73,17 +93,26 @@ def save(request):
             thoai = Thoai.objects.get(id=id_question)
             nguoi_dung = Nguoidung.objects.get(id=id_user)
             
-            # Lưu câu trả lời vào cơ sở dữ liệu
             traloi = Traloi(id_nguoidung=nguoi_dung, id_cauhoi=thoai,ngaygui=time, noidung=answer)
             traloi.save()
             
         return redirect('homeChat')
     return redirect('homeChat')
 def creatChat(request):
+    user = request.session.get('name')
+    if not user:
+        return redirect('Login')
+    id_user = Nguoidung.objects.get(ten = user) 
+    
     if request.method == 'POST':
         title = request.POST.get('title')
         purpose = "Trò chuyện"
-        doiThoai = Doithoai(ten=title, mucdich=purpose)
+        doiThoai = Doithoai(tieude=title, muctieu=purpose,nguoitao = id_user)
         doiThoai.save()
-        return redirect('homeChat')
+        return redirect('chatuser', id = doiThoai.id )
     return render(request, 'creatChat.html')
+def ChatUser(request,id):
+    user = request.session.get('name')
+    data = Doithoai.objects.get(id = id)
+    id_user = Nguoidung.objects.get(ten = user)
+    return render(request,"ChatUser.html",{"detail":data,"host":id_user})

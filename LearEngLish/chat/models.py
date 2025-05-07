@@ -21,7 +21,6 @@ class Baihoc(models.Model):
 
 class Dtnguoidung(models.Model):
     nguoigui = models.ForeignKey('Nguoidung', models.DO_NOTHING, db_column='NguoiGui', blank=True, null=True)  # Field name made lowercase.
-    nguoinhan = models.ForeignKey('Nguoidung', models.DO_NOTHING, db_column='NguoiNhan', related_name='dtnguoidung_nguoinhan_set', blank=True, null=True)  # Field name made lowercase.
     tinnhan = models.CharField(db_column='TinNhan', max_length=255, blank=True, null=True)  # Field name made lowercase.
     ngay = models.DateField(db_column='Ngay', blank=True, null=True)  # Field name made lowercase.
     id_doithoai = models.ForeignKey('Doithoai', models.DO_NOTHING, db_column='id_DoiThoai', blank=True, null=True)  # Field name made lowercase.
@@ -35,6 +34,7 @@ class Doithoai(models.Model):
     tieude = models.CharField(db_column='TieuDe', max_length=255, blank=True, null=True)  # Field name made lowercase.
     muctieu = models.CharField(db_column='MucTieu', max_length=255, blank=True, null=True)  # Field name made lowercase.
     hinhanh = models.CharField(max_length=255, blank=True, null=True)
+    nguoitao = models.ForeignKey('Nguoidung', models.DO_NOTHING, db_column='NguoiTao', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
