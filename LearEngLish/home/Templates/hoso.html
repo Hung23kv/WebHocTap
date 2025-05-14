@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt</title>
+    <link rel="stylesheet" href="{% static 'css/hoso.css' %}">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="title">Cài đặt</h1>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <a href="javascript:void(0);" class="tab active" id="profile-tab" onclick="showTab('profile')">
+                <span class="tab-icon">👤</span>
+                Hồ sơ
+            </a>
+            <a href="javascript:void(0);" class="tab" id="password-tab" onclick="showTab('password')">
+                <span class="tab-icon">🔒</span>
+                Mật khẩu
+            </a>
+            <a href="#" class="tab">
+                <span class="tab-icon">❌</span>
+                Xóa tài khoản
+            </a>
+        </div>
+        
+        <!-- Thông tin hồ sơ -->
+        <div id="profile-content">
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'password' not in message.tags %}
+                            <div class="alert">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            
+                <div class="form-container">
+                    <div class="form-group">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input type="text" name="Ten" class="form-input" value="{{ user.Ten }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="Email" class="form-input" value="{{ user.Email }}">
+                    </div>
+                    
+                    <button type="submit" class="save-button">✓ Lưu</button>
+                    
+                    <div class="divider"></div>
+                    
+                    <button class="download-button">
+                        👤 Tải dữ liệu cá nhân
+                    </button>
+                </div>
+            </form>
+        </div>
+    
+        <!-- Đổi mật khẩu -->
+        <div id="password-content" style="display:none;">
+            <form method="post" style="margin-top: 30px;">
+                {% csrf_token %}
+                <input type="hidden" name="change_password" value="1">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'password' in message.tags and 'thành công' in message|lower %}
+                            <div class="alert alert-success">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu cũ</label>
+                    <div style="position:relative;">
+                        <input type="password" name="old_password" class="form-input" id="old_password" required>
+                        <span class="toggle-password" onclick="togglePassword('old_password', this)">👁️</span>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'password' in message.tags and 'mật khẩu cũ' in message|lower %}
+                                <div class="alert alert-error" style="margin-top: 5px;">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu mới</label>
+                    <div style="position:relative;">
+                        <input type="password" name="new_password" class="form-input" id="new_password" required>
+                        <span class="toggle-password" onclick="togglePassword('new_password', this)">👁️</span>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'password' in message.tags and '6 ký tự' in message|lower %}
+                                <div class="alert alert-error" style="margin-top: 5px;">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nhập lại mật khẩu mới</label>
+                    <div style="position:relative;">
+                        <input type="password" name="confirm_password" class="form-input" id="confirm_password" required>
+                        <span class="toggle-password" onclick="togglePassword('confirm_password', this)">👁️</span>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if 'password' in message.tags and 'không khớp' in message|lower %}
+                                <div class="alert alert-error" style="margin-top: 5px;">{{ message }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="save-button">Đổi mật khẩu</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer-wave"></div>
+    
+    <script>
+    function showTab(tab) {
+        // Ẩn tất cả nội dung
+        document.getElementById('profile-content').style.display = 'none';
+        document.getElementById('password-content').style.display = 'none';
+
+        // Bỏ active ở tất cả tab
+        document.getElementById('profile-tab').classList.remove('active');
+        document.getElementById('password-tab').classList.remove('active');
+
+        // Hiện nội dung tab được chọn và set active
+        if (tab === 'profile') {
+            document.getElementById('profile-content').style.display = 'block';
+            document.getElementById('profile-tab').classList.add('active');
+        } else if (tab === 'password') {
+            document.getElementById('password-content').style.display = 'block';
+            document.getElementById('password-tab').classList.add('active');
+        }
+    }
+
+    // Tự động chuyển đến tab mật khẩu nếu có lỗi
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'password' in message.tags %}
+                showTab('password');
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    function togglePassword(inputId, icon) {
+        var input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.textContent = "🙈";
+        } else {
+            input.type = "password";
+            icon.textContent = "👁️";
+        }
+    }
+
+    // Thêm hàm xử lý lỗi mật khẩu
+    function showPasswordError(message) {
+        const errorDiv = document.getElementById('password-error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    // Xóa tất cả thông báo khi load lại trang
+    storage = messages.get_messages(request)
+    storage.used = True
+    </script>
+</body>
+</html>

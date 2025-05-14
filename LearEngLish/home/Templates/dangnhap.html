@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Học Tiếng Anh Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dangnhap.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="login-image">
+            <h2>Học Tiếng Anh Online</h2>
+            <p>Nền tảng học tiếng Anh hiện đại giúp bạn thành thạo ngôn ngữ một cách nhanh chóng và hiệu quả.</p>
+            <ul class="features">
+                <li><i class="fas fa-check-circle"></i> Học mọi lúc, mọi nơi</li>
+                <li><i class="fas fa-check-circle"></i> Hơn 10,000 bài học chất lượng</li>
+                <li><i class="fas fa-check-circle"></i> Phương pháp học hiệu quả</li>
+                <li><i class="fas fa-check-circle"></i> Giáo viên bản ngữ hỗ trợ</li>
+                <li><i class="fas fa-check-circle"></i> Chứng chỉ được công nhận toàn cầu</li>
+            </ul>
+        </div>
+        <div class="login-form">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>EnglishMaster</h1>
+            </div>
+            <h2>Đăng Nhập</h2>
+            <form action="{% url 'dang_nhap' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email hoặc tên đăng nhập</label>
+                    <input type="text" id="email" name="email" placeholder="Nhập email hoặc tên đăng nhập" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="matkhau" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="remember-forgot">
+                    <div class="remember">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="login-button">Đăng Nhập</button>
+                <div class="social-login">
+                    <p>Hoặc đăng nhập với</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-google"></i></a>
+                        <a href="#"><i class="fab fa-apple"></i></a>
+                    </div>
+                </div>
+                <div class="register">
+                    <p>Chưa có tài khoản? <a href="#">Đăng ký ngay</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

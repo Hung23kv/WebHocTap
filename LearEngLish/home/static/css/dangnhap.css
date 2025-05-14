@@ -1,0 +1,276 @@
+:root {
+    --primary-color: #4A6FFF;
+    --secondary-color: #FF9F43;
+    --accent-color: #4CD4A7;
+    --text-color: #333;
+    --light-gray: #f5f5f5;
+    --medium-gray: #e0e0e0;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light-gray);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f5f5f5"/><circle cx="10" cy="10" r="2" fill="%234CD4A7"/><circle cx="30" cy="10" r="2" fill="%234A6FFF"/><circle cx="50" cy="10" r="2" fill="%23FF9F43"/><circle cx="70" cy="10" r="2" fill="%234CD4A7"/><circle cx="90" cy="10" r="2" fill="%234A6FFF"/><circle cx="10" cy="30" r="2" fill="%23FF9F43"/><circle cx="30" cy="30" r="2" fill="%234CD4A7"/><circle cx="50" cy="30" r="2" fill="%234A6FFF"/><circle cx="70" cy="30" r="2" fill="%23FF9F43"/><circle cx="90" cy="30" r="2" fill="%234CD4A7"/><circle cx="10" cy="50" r="2" fill="%234A6FFF"/><circle cx="30" cy="50" r="2" fill="%23FF9F43"/><circle cx="50" cy="50" r="2" fill="%234CD4A7"/><circle cx="70" cy="50" r="2" fill="%234A6FFF"/><circle cx="90" cy="50" r="2" fill="%23FF9F43"/><circle cx="10" cy="70" r="2" fill="%234CD4A7"/><circle cx="30" cy="70" r="2" fill="%234A6FFF"/><circle cx="50" cy="70" r="2" fill="%23FF9F43"/><circle cx="70" cy="70" r="2" fill="%234CD4A7"/><circle cx="90" cy="70" r="2" fill="%234A6FFF"/><circle cx="10" cy="90" r="2" fill="%23FF9F43"/><circle cx="30" cy="90" r="2" fill="%234CD4A7"/><circle cx="50" cy="90" r="2" fill="%234A6FFF"/><circle cx="70" cy="90" r="2" fill="%23FF9F43"/><circle cx="90" cy="90" r="2" fill="%234CD4A7"/></svg>');
+}
+
+.container {
+    display: flex;
+    width: 900px;
+    max-width: 95%;
+    background-color: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.login-image {
+    flex: 1;
+    background-color: var(--accent-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    color: var(--white);
+    position: relative;
+}
+
+.login-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><text x="20" y="30" font-family="Arial" font-size="20" fill="%23ffffff33">A B C</text><text x="40" y="60" font-family="Arial" font-size="20" fill="%23ffffff33">Hello</text><text x="10" y="90" font-family="Arial" font-size="20" fill="%23ffffff33">World</text><text x="50" y="120" font-family="Arial" font-size="20" fill="%23ffffff33">Learn</text><text x="15" y="150" font-family="Arial" font-size="20" fill="%23ffffff33">English</text><text x="30" y="180" font-family="Arial" font-size="20" fill="%23ffffff33">Language</text></svg>');
+    opacity: 0.3;
+}
+
+.login-image h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.login-image p {
+    font-size: 1.1rem;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.features {
+    list-style: none;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.features li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.features li i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.login-form {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.login-form h2 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--medium-gray);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+}
+
+.remember input {
+    margin-right: 8px;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.login-button:hover {
+    background-color: #3a5cd8;
+}
+
+.social-login {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.social-login p {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.social-login p::before,
+.social-login p::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background-color: var(--medium-gray);
+}
+
+.social-login p::before {
+    left: 0;
+}
+
+.social-login p::after {
+    right: 0;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-icons a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    transition: all 0.3s;
+}
+
+.social-icons a:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.register {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-color);
+}
+
+.register a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .login-image {
+        padding: 30px;
+    }
+
+    .login-form {
+        padding: 30px;
+    }
+}
