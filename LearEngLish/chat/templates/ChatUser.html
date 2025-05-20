@@ -21,11 +21,13 @@
                 </a>
             </div>
             <div class="header-right">
-                {%if host.ten == request.session.name %}
+                {%if host.id == data.nguoitao.id %}
                     <a href="" class="delete-button">
                     <i class="fa-solid fa-trash"></i>
                         Hủy
                     </a>
+                {% else %}
+                    <p>Trò chuyện</p>
                 {%endif%}
             </div>
         </header>
@@ -34,20 +36,22 @@
     color: blue;">Tiêu đề: {{detail.tieude}}</p>
         <main class="main-content">
             <!-- Chat Messages -->
-            <div class="chat-messages">
-                <div class="message bot-message">
-                    <div class="message-content">
-                        <p>Hello </p>
-                        <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
+            {% for msg in messages %}
+                {% if msg.nguoigui.id == host.id %}
+                    <div class="message user-message" style="margin:10px">
+                        <div class="message-content">
+                            <p class="english">{{ msg.tinnhan }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="message user-message">
+                {% else %}
+                    <div class="message bot-message" style="margin:10px" >
                     <div class="message-content">
-                        <p class="english">Hi</p>
+                        <p>{{ msg.tinnhan }}</p>
                     </div>
-                </div>
-
-            </div>
+                    </div>
+                {% endif %}
+                
+            {% endfor %}
         </main>
 
 

@@ -45,13 +45,6 @@
                     </div>
                 </div>
 
-                {% if item.suggestion %}
-                    <div class="message bot-message suggestion">
-                        <div class="message-content">
-                            <p>Gợi ý: {{ item.suggestion }}</p>
-                        </div>
-                    </div>
-                {% endif %}
 
                 {% endfor %}
 
@@ -82,14 +75,18 @@
             <div class="suggestion-panel" id="suggestionPanel">
                 <h3>Gợi ý trả lời</h3>
                 <div class="suggestion-list">
+                    {% for suggestion in suggestions %}
                     <div class="suggestion-item">
-                        <p>No, thank you. Just the latte, please.</p>
-                        <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
+                        <p>{{ suggestion }}</p>
+                        <button class="translate-suggestion-btn" data-text="{{ suggestion }}">
+                            <i class="fas fa-language"></i>
+                        </button>
                     </div>
+                    {% empty %}
                     <div class="suggestion-item">
-                        <p>No, thank you. Just the latte.</p>
-                        <button class="translate-suggestion-btn"><i class="fas fa-language"></i></button>
+                        <p>Không có gợi ý</p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </main>
@@ -102,11 +99,10 @@
             </div>
             <div class="chat-input-area">
                 <div class="input-tools">
-                    <button class="tool-btn"><i class="fas fa-language"></i></button>
-                    <button class="tool-btn suggestion-btn">
+                    <button type="button" class="tool-btn"><i class="fas fa-language"></i></button>
+                    <button type="button" class="tool-btn suggestion-btn">
                         <i class="fas fa-lightbulb"></i> Gợi ý
                     </button>
-                    <button class="tool-btn"><i class="fas fa-microphone"></i></button>
                 </div>
                 <form method = "post"> 
                     {% csrf_token %}
@@ -123,6 +119,64 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const suggestionPanel = document.getElementById('suggestionPanel');
+        const suggestionBtn = document.querySelector('.suggestion-btn');
+        const inputField = document.querySelector('input[name="ChatContent"]');
+        
+        // Prevent form submission when clicking suggestion button
+        suggestionBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            suggestionPanel.classList.toggle('active');
+        });
+
+        // Handle suggestion clicks
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const suggestionText = this.querySelector('p').textContent;
+                inputField.value = suggestionText;
+                suggestionPanel.classList.remove('active'); // Hide panel after selection
+            });
+        });
+
+        // Close suggestion panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!suggestionPanel.contains(e.target) && !suggestionBtn.contains(e.target)) {
+                suggestionPanel.classList.remove('active');
+            }
+        });
+        });
+    </script>
 </body>
 </html>
+
+<style>
+        .suggestion-panel {
+            display: none;
+            position: absolute;
+            right: 20px;
+            bottom: 100px;
+            width: 300px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .suggestion-panel.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
