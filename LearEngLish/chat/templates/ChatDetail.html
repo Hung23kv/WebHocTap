@@ -1,0 +1,182 @@
+{%load static%}
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemBot - Chat với AI</title>
+    <link rel="stylesheet" href="{% static 'css/ChatDetail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="{% static 'images/logo.jpg' %}" alt="MemRise Logo" class="memrise-logo">
+                </div>
+                <a href="{%url 'homeChat' %}" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại trang chủ
+                </a>
+            </div>
+            <div class="header-right">
+                <h1>Học tập tiếng anh giao tiếp</h1>
+            </div>
+        </header>
+        <br>
+        <p class = "text" style = "text-align: center;
+    color: blue;">Mục tiêu: {{Chat.muctieu}}</p>
+        <!-- Main Content -->
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Messages -->
+            <div class="chat-messages">
+                {% for item in chat %}
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>{{ item.question }}</p>
+                        <button class="audio-btn"><i class="fas fa-volume-up"></i></button>
+                    </div>
+                </div>
+                <div class="message user-message">
+                    <div class="message-content">
+                        <p class="english">{{ item.answer }}</p>
+                    </div>
+                </div>
+
+
+                {% endfor %}
+
+                {% if Content %}
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>{{ Content.cauhoi }}</p>
+                    </div>
+                </div>
+                {% elif done %}
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p> Bạn đã hoàn thành tất cả câu hỏi! Tuyệt vời!</p>
+                       <form method="post" action="{% url 'save' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="reply_data" value="{{ reply_data }}">
+                            <input type="hidden" name="chat_id" value="{{ Chat.id }}">
+                            <button type="submit" class="back-button">
+                                <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div> <!-- đóng đúng div.chat-messages -->
+
+            <!-- Suggestion Panel -->
+            <div class="suggestion-panel" id="suggestionPanel">
+                <h3>Gợi ý trả lời</h3>
+                <div class="suggestion-list">
+                    {% for suggestion in suggestions %}
+                    <div class="suggestion-item">
+                        <p>{{ suggestion }}</p>
+                        <button class="translate-suggestion-btn" data-text="{{ suggestion }}">
+                            <i class="fas fa-language"></i>
+                        </button>
+                    </div>
+                    {% empty %}
+                    <div class="suggestion-item">
+                        <p>Không có gợi ý</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <div class="message-counter">
+                <span>Tin nhắn còn lại: {{remaining_questions}}</span>
+            </div>
+            <div class="chat-input-area">
+                <div class="input-tools">
+                    <button type="button" class="tool-btn"><i class="fas fa-language"></i></button>
+                    <button type="button" class="tool-btn suggestion-btn">
+                        <i class="fas fa-lightbulb"></i> Gợi ý
+                    </button>
+                </div>
+                <form method = "post"> 
+                    {% csrf_token %}
+                    <!-- Lưu trữ dữ liệu qua hidden fields -->
+                <input type="hidden" name="current_index" value="{{ current_index }}">
+                <input type="hidden" name="reply_data" value="{{ reply_data }}">
+                
+                    <div class="input-field">
+                        <input type="text" placeholder="Nhập tin nhắn của bạn..." name = "ChatContent">
+                    <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const suggestionPanel = document.getElementById('suggestionPanel');
+        const suggestionBtn = document.querySelector('.suggestion-btn');
+        const inputField = document.querySelector('input[name="ChatContent"]');
+        
+        // Prevent form submission when clicking suggestion button
+        suggestionBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            suggestionPanel.classList.toggle('active');
+        });
+
+        // Handle suggestion clicks
+        document.querySelectorAll('.suggestion-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const suggestionText = this.querySelector('p').textContent;
+                inputField.value = suggestionText;
+                suggestionPanel.classList.remove('active'); // Hide panel after selection
+            });
+        });
+
+        // Close suggestion panel when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!suggestionPanel.contains(e.target) && !suggestionBtn.contains(e.target)) {
+                suggestionPanel.classList.remove('active');
+            }
+        });
+        });
+    </script>
+</body>
+</html>
+
+<style>
+        .suggestion-panel {
+            display: none;
+            position: absolute;
+            right: 20px;
+            bottom: 100px;
+            width: 300px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .suggestion-panel.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+    </style>

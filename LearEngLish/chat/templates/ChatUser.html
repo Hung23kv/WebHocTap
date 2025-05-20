@@ -1,0 +1,101 @@
+{%load static%}
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="{% static 'css/ChatDetail.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <img src="{% static 'images/logo.jpg' %}" alt="MemRise Logo" class="memrise-logo">
+                </div>
+                <a href="{%url 'homeChat' %}" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Rời phòng
+                </a>
+            </div>
+            <div class="header-right">
+                {%if host.id == data.nguoitao.id %}
+                    <a href="" class="delete-button">
+                    <i class="fa-solid fa-trash"></i>
+                        Hủy
+                    </a>
+                {% else %}
+                    <p>Trò chuyện</p>
+                {%endif%}
+            </div>
+        </header>
+        <br>
+        <p class = "text" style = "text-align: center;
+    color: blue;">Tiêu đề: {{detail.tieude}}</p>
+        <main class="main-content">
+            <!-- Chat Messages -->
+            {% for msg in messages %}
+                {% if msg.nguoigui.id == host.id %}
+                    <div class="message user-message" style="margin:10px">
+                        <div class="message-content">
+                            <p class="english">{{ msg.tinnhan }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="message bot-message" style="margin:10px" >
+                    <div class="message-content">
+                        <p>{{ msg.tinnhan }}</p>
+                    </div>
+                    </div>
+                {% endif %}
+                
+            {% endfor %}
+        </main>
+
+
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <div class="chat-input-area">
+                <form method = "post"> 
+                {% csrf_token %}
+                <!-- Lưu trữ dữ liệu qua hidden fields -->
+                <input type="hidden" name="current_index" value="{{ current_index }}">
+                <input type="hidden" name="reply_data" value="{{ reply_data }}">
+                
+                    <div class="input-field">
+                        <input type="text" placeholder="Nhập tin nhắn của bạn..." name = "ChatContent">
+                    <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+<style>
+.delete-button {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    margin-top: 15px;
+}
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+.delete-button i {
+    font-size: 14px;
+}
+</style>

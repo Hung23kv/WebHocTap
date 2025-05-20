@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home',
     'homeUsers',
     'CustomAdmin',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -77,13 +78,13 @@ WSGI_APPLICATION = 'LearEngLish.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-   "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "TiengAnh",
-        "USER": "postgres",
-        "PASSWORD": "11072003hau",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'HocTiengAnh',
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'localhost',  
+        'PORT': '5432',      
     }
 }
 
@@ -133,5 +134,10 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+from decouple import config
+DEEPSEEK_API_KEY = config('DEEPSEEK_API_KEY', default='')
