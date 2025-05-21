@@ -3,5 +3,102 @@
 {% block main-Admin %}
     <div class="content-container">
         <h1 class="page-title">Thêm từ vựng cho bài học: {{ lesson.tieude }}</h1>
+
+        <div class="vocab-form-container">
+            <!-- Form to input number of vocabulary words -->
+            <div id="number-input-section" class="mb-4">
+                <h3>Nhập số lượng từ vựng cần thêm:</h3>
+                <div class="input-group" style="max-width: 300px;">
+                    <input type="number" id="vocab-count" class="form-control" min="1" value="1">
+                    <button class="btn btn-primary" onclick="generateVocabInputs()">Tạo</button>
+                </div>
+            </div>
+
+            <!-- Dynamic vocabulary input form -->
+            <form id="vocab-form" method="POST" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <div id="vocab-inputs-container">
+                    <!-- Dynamic inputs will be generated here -->
+                </div>
+                <button type="submit" class="btn btn-success mt-3">Lưu từ vựng</button>
+            </form>
+        </div>
     </div>
+
+    <style>
+        .vocab-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .vocab-item h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+
+    <script>
+        function generateVocabInputs() {
+            const count = parseInt(document.getElementById('vocab-count').value);
+            if (count < 1) {
+                alert('Vui lòng nhập số lượng từ vựng lớn hơn 0');
+                return;
+            }
+
+            const container = document.getElementById('vocab-inputs-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                const vocabItem = document.createElement('div');
+                vocabItem.className = 'vocab-item';
+                vocabItem.innerHTML = `
+                    <h4>Từ vựng ${i + 1}</h4>
+                    <div class="form-group">
+                        <label for="tu_${i}">Từ:</label>
+                        <input type="text" class="form-control" id="tu_${i}" name="tu_${i}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dich_${i}">Dịch:</label>
+                        <input type="text" class="form-control" id="dich_${i}" name="dich_${i}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phatam_${i}">Phát âm:</label>
+                        <input type="text" class="form-control" id="phatam_${i}" name="phatam_${i}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hinhanh_${i}">Hình ảnh:</label>
+                        <input type="file" class="form-control" id="hinhanh_${i}" name="hinhanh_${i}" accept="image/*" onchange="previewImage(this, ${i})">
+                        <img id="preview_${i}" class="preview-image">
+                    </div>
+                `;
+                container.appendChild(vocabItem);
+            }
+
+            document.getElementById('vocab-form').style.display = 'block';
+        }
+
+        function previewImage(input, index) {
+            const preview = document.getElementById(`preview_${index}`);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 {% endblock %}
+

@@ -1,0 +1,64 @@
+{% extends 'Base.html' %}
+
+{% block main-Admin%}
+<style>
+    .th-head {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+</style>
+
+<div class="content-container">
+    <h1 class="page-title">Quản lý cuộc đối thoại</h1>
+    <div class="row">
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="{% url 'add_conversation' %}" style="margin-bottom: 20px;">
+                Thêm cuộc đối thoại
+            </a>
+        </div>
+        <div class="table-responsive table-bordered">
+            <table class="table">
+                <thead>
+                    <tr class="th-head">
+                        <th>STT</th>
+                        <th>Tiêu đề</th>
+                        <th>Mục tiêu</th>
+                        <th>Hình ảnh</th>
+                        <!-- <th>Người tạo</th> -->
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if conversations %}
+                        {% for conv in conversations %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ conv.tieude }}</td>
+                            <td>{{ conv.muctieu }}</td>
+                            <td>
+                                {% if conv.hinhanh %}
+                                    <img src="/media/{{ conv.hinhanh }}" alt="{{ conv.tieude }}" style="max-width: 80px;">
+                                {% endif %}
+                            </td>
+                            <!-- <td>{{ conv.nguoitao.ten }}</td> -->
+                            <td>
+                                <a class="btn btn-info" href="{% url 'manage_dialogue' conv.id %}">
+                                    Quản lý câu hỏi
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">Không có cuộc đối thoại nào.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock main-Admin%} 

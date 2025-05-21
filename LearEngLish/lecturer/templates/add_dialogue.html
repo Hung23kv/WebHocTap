@@ -1,0 +1,50 @@
+{% extends 'Base.html' %}
+
+{% block main-Admin %}
+    <div class="content-container">
+        <h1 class="page-title">Thêm câu hỏi cho: {{ conversation.tieude }}</h1>
+
+        <form method="post" id="dialogueForm">
+            {% csrf_token %}
+            <div id="dialogueContainer">
+                <div class="dialogue-item mb-3">
+                    <div class="form-group">
+                        <label class="form-label">Câu hỏi 1</label>
+                        <input type="text" class="form-control" name="cauhoi_0" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-secondary" onclick="addDialogueField()">
+                    Thêm câu hỏi
+                </button>
+            </div>
+
+            <div class="row" style="margin-top: 20px;">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary me-3">Lưu câu hỏi</button>
+                    <a href="{% url 'manage-conversation' %}" class="btn btn-secondary">Quay lại</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let dialogueCount = 1;
+
+        function addDialogueField() {
+            const container = document.getElementById('dialogueContainer');
+            const newDialogue = document.createElement('div');
+            newDialogue.className = 'dialogue-item mb-3';
+            newDialogue.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Câu hỏi ${dialogueCount + 1}</label>
+                    <input type="text" class="form-control" name="cauhoi_${dialogueCount}" required>
+                </div>
+            `;
+            container.appendChild(newDialogue);
+            dialogueCount++;
+        }
+    </script>
+{% endblock main-Admin %} 

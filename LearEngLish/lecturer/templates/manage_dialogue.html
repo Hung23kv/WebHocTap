@@ -1,0 +1,103 @@
+{% extends 'Base.html' %}
+
+{% block main-Admin %}
+    <div class="content-container">
+        <h1 class="page-title">Quản lý câu hỏi cho: {{ conversation.tieude }}</h1>
+        <div class="col-lg-12">
+            <a class="btn btn-success" href="#" style="margin-bottom: 20px;" onclick="openAddDialogueModal(); return false;">
+                Thêm câu hỏi
+            </a>
+        </div>
+        <div class="table-responsive table-bordered">
+            <table class="table">
+                <thead>
+                    <tr class="th-head">
+                        <th>STT</th>
+                        <th>Câu hỏi</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dialogue in dialogues %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ dialogue.cauhoi }}</td>
+                        <td>{{ dialogue.ngaytao | date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="#" class="btn btn-warning btn-sm edit-dialogue" 
+                               data-id="{{ dialogue.id }}"
+                               data-cauhoi="{{ dialogue.cauhoi|escapejs }}"
+                               onclick="openEditDialogueModal(this); return false;">
+                                Sửa
+                            </a>
+                            <a href="#" class="btn btn-danger btn-sm delete-dialogue" 
+                               data-id="{{ dialogue.id }}"
+                               onclick="confirmDelete(this); return false;">Xóa</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3" style="text-align: center;">
+            <a href="{% url 'manage-conversation' %}" class="btn btn-primary">Quay lại</a>
+        </div>
+    </div>
+
+    <!-- Modal Thêm/Sửa câu hỏi -->
+    <div class="modal fade" id="dialogueModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="dialogueForm">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dialogueModalLabel">Thêm câu hỏi mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="dialogue_id" id="dialogueIdInput">
+                        <div class="mb-3">
+                            <label for="cauhoiInput" class="form-label">Câu hỏi</label>
+                            <input type="text" class="form-control" id="cauhoiInput" name="cauhoi" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAddDialogueModal() {
+            document.getElementById('dialogueForm').reset();
+            document.getElementById('dialogueModalLabel').innerText = 'Thêm câu hỏi mới';
+            document.getElementById('dialogueIdInput').value = '';
+            var modal = new bootstrap.Modal(document.getElementById('dialogueModal'));
+            modal.show();
+        }
+
+        function openEditDialogueModal(element) {
+            const id = element.getAttribute('data-id');
+            const cauhoi = element.getAttribute('data-cauhoi');
+
+            document.getElementById('dialogueModalLabel').innerText = 'Sửa câu hỏi';
+            document.getElementById('dialogueIdInput').value = id;
+            document.getElementById('cauhoiInput').value = cauhoi;
+            
+            var modal = new bootstrap.Modal(document.getElementById('dialogueModal'));
+            modal.show();
+        }
+
+        function confirmDelete(element) {
+            const id = element.getAttribute('data-id');
+            if (confirm('Bạn có chắc chắn muốn xóa câu hỏi này?')) {
+                window.location.href = `/lecturer/delete-dialogue/${id}/`;
+            }
+        }
+    </script>
+{% endblock main-Admin %} 

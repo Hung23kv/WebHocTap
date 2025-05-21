@@ -27,7 +27,7 @@
                         <td>{{ vocab.phatam }}</td>
                         <td>
                             {% if vocab.hinhanh %}
-                                <img src="/media/{{ vocab.hinhanh }}" alt="{{ vocab.tu }}" style="max-width: 100px;">
+                                <img src="/media/{{ vocab.hinhanh }}" alt="{{ vocab.tu }}" style="max-width: 80px;">
                             {% endif %}
                         </td>
                         <td>
@@ -38,7 +38,9 @@
                                data-phatam="{{ vocab.phatam|escapejs }}"
                                data-hinhanh="{% if vocab.hinhanh %}/media/{{ vocab.hinhanh }}{% endif %}"
                                onclick="openEditVocabModal(this); return false;">Sửa</a>
-                            <a href="" class="btn btn-danger btn-sm">Xóa</a>
+                            <a href="#" class="btn btn-danger btn-sm delete-vocab" 
+                               data-id="{{ vocab.id }}"
+                               onclick="confirmDeleteVocab(this); return false;">Xóa</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -151,6 +153,13 @@
         }
         reader.readAsDataURL(input.files[0]);
       }
+    }
+
+    function confirmDeleteVocab(element) {
+        const id = element.getAttribute('data-id');
+        if (confirm('Bạn có chắc chắn muốn xóa từ vựng này?')) {
+            window.location.href = `/lecturer/delete-vocab/${id}/`;
+        }
     }
     </script>
 {% endblock main-Admin %}

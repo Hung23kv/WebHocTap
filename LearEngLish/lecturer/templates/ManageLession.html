@@ -30,7 +30,12 @@
     </form>
     <div class="row">
         <div class="col-lg-12">
-            <a  class="btn btn-success" href="" style="margin-bottom: 20px;">Thêm khóa học</a>
+            {% if selected_lesstion %}
+                <a class="btn btn-success" href="{% url 'add_lesson' %}?course_id={{ selected_lesstion }}" 
+                    style="margin-bottom: 20px;">
+                    Thêm bài học
+                </a>
+            {% endif %}
         </div>
         <div class="table-responsive table-bordered">
             <table class="table">
