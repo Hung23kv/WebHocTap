@@ -13,9 +13,6 @@ def nguoidung_dang_nhap(request):
     return get_object_or_404(Nguoidung, id=nguoidung_id) if nguoidung_id else None
 
 
-def get_cap_do_hien_tai(diem):
-    return Khoahoc.objects.filter(diemlencap__lte=diem).order_by('-diemlencap').first()
-
 
 def get_cap_do_tiep_theo(diem):
     return Khoahoc.objects.filter(diemlencap__gt=diem).order_by('diemlencap').first()
@@ -38,7 +35,6 @@ def dang_nhap(request):
 
 
 
-
 def hoso(request):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
@@ -52,7 +48,7 @@ def hoso(request):
             confirm_password = request.POST.get('confirm_password', '').strip()
 
             # Kiểm tra mật khẩu cũ
-            if not old_password or nguoidung.MatKhau.strip() != old_password:
+            if not old_password or nguoidung.matkhau.strip() != old_password:
                 messages.error(request, '❌ Mật khẩu cũ không đúng!', extra_tags='password')
                 return redirect('hoso')
 
@@ -65,7 +61,7 @@ def hoso(request):
                 messages.error(request, '❌ Mật khẩu mới không khớp!', extra_tags='password')
                 return redirect('hoso')
 
-            nguoidung.MatKhau = new_password
+            nguoidung.matkhau = new_password
             nguoidung.save()
             messages.success(request, '✅ Đổi mật khẩu thành công!', extra_tags='password')
             return redirect('hoso')
@@ -74,8 +70,8 @@ def hoso(request):
         ten = request.POST.get('Ten')
         email = request.POST.get('Email')
         if ten and email:
-            nguoidung.Ten = ten
-            nguoidung.Email = email
+            nguoidung.ten = ten
+            nguoidung.email = email
             nguoidung.save()
             messages.success(request, '✅ Cập nhật thành công!')
         else:
@@ -93,10 +89,8 @@ def trang_chu(request):
     if not nguoidung:
         return redirect('dang_nhap')
 
-    # Get or create tien_trinh
     tien_trinh = Tientrinh.objects.filter(id_nguoidung=nguoidung).first()
     if not tien_trinh:
-        # Get the first course (lowest level)
         first_course = Khoahoc.objects.order_by('diemlencap').first()
         if first_course:
             tien_trinh = Tientrinh.objects.create(
@@ -109,24 +103,19 @@ def trang_chu(request):
             messages.error(request, "Không tìm thấy khóa học nào. Vui lòng liên hệ hỗ trợ.")
             return redirect('dang_nhap')
 
-    cap_do = get_cap_do_hien_tai(tien_trinh.diemtong)
     cap_do_tiep_theo = get_cap_do_tiep_theo(tien_trinh.diemtong)
-
+    cap_do = tien_trinh.id_khoahoc.ten 
     diem_hien_tai = tien_trinh.diemtong
     diem_toi_da = cap_do_tiep_theo.diemlencap if cap_do_tiep_theo else diem_hien_tai
-    progress_percent = min((diem_hien_tai / diem_toi_da) * 100, 100)
-
-    # Lấy tất cả bài học của cấp độ hiện tại
-    bai_hoc_list = Baihoc.objects.filter(id_khoahoc=cap_do).order_by('thutu')
+    progress_percent = min((diem_hien_tai / diem_toi_da) * 100, 100) if diem_toi_da else 100
 
     context = {
         'nguoidung': nguoidung,
-        'cap_do': cap_do.ten if cap_do else "Chưa có",
+        'cap_do': cap_do,
         'diem': diem_hien_tai,
         'diem_toi_da': diem_toi_da,
         'progress_percent': round(progress_percent, 2),
         'tuvung_hoc': tien_trinh.tudahoc,
-        'bai_hoc_list': bai_hoc_list,
     }
     return render(request, 'home.html', context)
 
@@ -174,11 +163,11 @@ def hoan_thanh_bai_hoc(request, bai_hoc_id):
     tien_trinh.diem_tong += bai_hoc.Diem
 
     # Xác định cấp độ mới dựa trên điểm mới
-    cap_do_moi = get_cap_do_hien_tai(tien_trinh.diem_tong)
+    # cap_do_moi = get_cap_do_hien_tai(tien_trinh.diem_tong)
 
-    if cap_do_moi and tien_trinh.id_khoahoc != cap_do_moi.id:
-        tien_trinh.id_khoahoc = cap_do_moi.id  # Gán id thay vì đối tượng
-        messages.success(request, f'🎉 Bạn đã lên cấp {cap_do_moi.Ten}!')
+    # if cap_do_moi and tien_trinh.id_khoahoc != cap_do_moi.id:
+    #     tien_trinh.id_khoahoc = cap_do_moi.id  # Gán id thay vì đối tượng
+    #     messages.success(request, f'🎉 Bạn đã lên cấp {cap_do_moi.Ten}!')
 
     tien_trinh.save()
 

@@ -1,35 +1,29 @@
+{% extends 'baseUsers.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cài đặt</title>
-    <link rel="stylesheet" href="{% static 'css/hoso.css' %}">
-</head>
-<body>
-    <div class="header">
-        <div class="container">
-            <h1 class="title">Cài đặt</h1>
-        </div>
+
+{% block title %}Cài đặt{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hoso.css' %}">
+{% endblock %}
+
+{% block header_title %}Cài đặt{% endblock %}
+
+{% block content %}
+<div class="hoso-center-wrapper">
+    <div class="tabs">
+        <a href="javascript:void(0);" class="tab active" id="profile-tab" onclick="showTab('profile')">
+            <span class="tab-icon">👤</span>
+            Hồ sơ
+        </a>
+        <a href="javascript:void(0);" class="tab" id="password-tab" onclick="showTab('password')">
+            <span class="tab-icon">🔒</span>
+            Mật khẩu
+        </a>
+        
     </div>
     
-    <div class="container">
-        <div class="tabs">
-            <a href="javascript:void(0);" class="tab active" id="profile-tab" onclick="showTab('profile')">
-                <span class="tab-icon">👤</span>
-                Hồ sơ
-            </a>
-            <a href="javascript:void(0);" class="tab" id="password-tab" onclick="showTab('password')">
-                <span class="tab-icon">🔒</span>
-                Mật khẩu
-            </a>
-            <a href="#" class="tab">
-                <span class="tab-icon">❌</span>
-                Xóa tài khoản
-            </a>
-        </div>
-        
+    <div class="hoso-content">
         <!-- Thông tin hồ sơ -->
         <div id="profile-content">
             <form method="post">
@@ -43,28 +37,26 @@
                     {% endfor %}
                 {% endif %}
             
-                <div class="form-container">
+                <div class="form-container" style="margin-top: 30px;">
                     <div class="form-group">
-                        <label class="form-label">Tên đăng nhập</label>
-                        <input type="text" name="Ten" class="form-input" value="{{ user.Ten }}">
+                        <label class="form-label">Họ tên</label>
+                        <input type="text" name="Ten" class="form-input" value="{{ user.ten }}">
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" name="Email" class="form-input" value="{{ user.Email }}">
+                        <input type="email" name="Email" class="form-input" value="{{ user.email }}">
                     </div>
                     
                     <button type="submit" class="save-button">✓ Lưu</button>
                     
                     <div class="divider"></div>
                     
-                    <button class="download-button">
-                        👤 Tải dữ liệu cá nhân
-                    </button>
+                    
                 </div>
             </form>
         </div>
-    
+
         <!-- Đổi mật khẩu -->
         <div id="password-content" style="display:none;">
             <form method="post" style="margin-top: 30px;">
@@ -128,59 +120,46 @@
             </form>
         </div>
     </div>
-    
-    <div class="footer-wave"></div>
-    
-    <script>
-    function showTab(tab) {
-        // Ẩn tất cả nội dung
-        document.getElementById('profile-content').style.display = 'none';
-        document.getElementById('password-content').style.display = 'none';
+</div>
+{% endblock %}
 
-        // Bỏ active ở tất cả tab
-        document.getElementById('profile-tab').classList.remove('active');
-        document.getElementById('password-tab').classList.remove('active');
+{% block extra_js %}
+<script>
+function showTab(tab) {
+    // Ẩn tất cả nội dung
+    document.getElementById('profile-content').style.display = 'none';
+    document.getElementById('password-content').style.display = 'none';
 
-        // Hiện nội dung tab được chọn và set active
-        if (tab === 'profile') {
-            document.getElementById('profile-content').style.display = 'block';
-            document.getElementById('profile-tab').classList.add('active');
-        } else if (tab === 'password') {
-            document.getElementById('password-content').style.display = 'block';
-            document.getElementById('password-tab').classList.add('active');
-        }
+    // Bỏ active ở tất cả tab
+    document.getElementById('profile-tab').classList.remove('active');
+    document.getElementById('password-tab').classList.remove('active');
+
+    // Hiện nội dung tab được chọn và set active
+    if (tab === 'profile') {
+        document.getElementById('profile-content').style.display = 'block';
+        document.getElementById('profile-tab').classList.add('active');
+    } else if (tab === 'password') {
+        document.getElementById('password-content').style.display = 'block';
+        document.getElementById('password-tab').classList.add('active');
     }
+}
 
-    // Tự động chuyển đến tab mật khẩu nếu có lỗi
-    {% if messages %}
-        {% for message in messages %}
-            {% if 'password' in message.tags %}
-                showTab('password');
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    function togglePassword(inputId, icon) {
-        var input = document.getElementById(inputId);
-        if (input.type === "password") {
-            input.type = "text";
-            icon.textContent = "🙈";
-        } else {
-            input.type = "password";
-            icon.textContent = "👁️";
-        }
+function togglePassword(inputId, icon) {
+    var input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "🙈";
+    } else {
+        input.type = "password";
+        icon.textContent = "👁️";
     }
+}
 
-    // Thêm hàm xử lý lỗi mật khẩu
-    function showPasswordError(message) {
-        const errorDiv = document.getElementById('password-error');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-    }
-
-    // Xóa tất cả thông báo khi load lại trang
-    storage = messages.get_messages(request)
-    storage.used = True
-    </script>
-</body>
-</html>
+// Thêm hàm xử lý lỗi mật khẩu
+function showPasswordError(message) {
+    const errorDiv = document.getElementById('password-error');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
+</script>
+{% endblock %}

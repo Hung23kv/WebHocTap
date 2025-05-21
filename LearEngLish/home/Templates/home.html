@@ -1,238 +1,51 @@
+{% extends "baseUsers.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Học Tiếng Anh</title>
+
+{% block title %}Học Tiếng Anh{% endblock %}
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="#" class="nav-item active">
-            <i class="fas fa-home"></i>
-            Trang chủ
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-comment-dots"></i>
-            Tình huống
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-video"></i>
-            Video
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-comments"></i>
-            Cuộc đối thoại
-        </a>
-        </div>
+{% endblock %}
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="language-selector">
-                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png" alt="UK Flag" class="language-flag">
-            </div>
-            <div class="user-actions">
-                <i class="fas fa-chart-bar"></i>
-                <i class="fas fa-file-alt"></i>
-                <div class="points">
-                    <i class="fas fa-fire"></i>
-                    <span>0</span>
-                </div>
-                <div class="user-avatar">
-                    <a href="{% url 'hoso' %}">
-                        <i class="fas fa-user"></i>
-                    </a>
-                    
-                </div>
-            </div>
-        </div>
+{% block header_title %}Học Tiếng Anh{% endblock %}
 
-<!-- Course Header -->
-        <div class="course-header">
-            <div class="beginner-label">
-                <i class="fas fa-user-graduate"></i>
-                <span>
-                    {% if cap_do == "Cấp độ 1" %}
-                        Người mới bắt đầu
-                    {% elif cap_do == "Cấp độ 2" %}
-                        Sơ cấp
-                    {% elif cap_do == "Cấp độ 3" %}
-                        Trung cấp
-                    {% else %}
-                        Cao cấp
-                    {% endif %}
-                </span>
+{% block content %}
+<div class="main-content-inner">
+    <div class="course-header">
+        <div class="beginner-label">
+            <i class="fas fa-user-graduate"></i>
+            <span>
+                {% if cap_do == "Cấp độ 1" %}
+                    Người mới bắt đầu
+                {% elif cap_do == "Cấp độ 2" %}
+                    Sơ cấp
+                {% elif cap_do == "Cấp độ 3" %}
+                    Trung cấp
+                {% else %}
+                    Cao cấp
+                {% endif %}
+            </span>
+        </div>
+        <h1 class="course-title">
+            Tiếng Anh - Cấp độ
+            <div class="level-badge">{{ cap_do }}</div>
+        </h1>
+        <div class="progress-section">
+            <div class="progress-label">Tiến độ</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ progress_percent }}%"></div>
+            </div>
+            <div class="progress-count">{{ diem }} / {{ diem_toi_da }} điểm</div>
+        </div>
     </div>
-    
-            <h1 class="course-title">
-                Tiếng Anh - Cấp độ
-                <div class="level-badge">{{ cap_do }}</div>
-            </h1>
 
-            <div class="progress-section">
-                <div class="progress-label">Tiến độ</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: {{ progress_percent }}%"></div>
-                </div>
-                <div class="progress-count">{{ diem }} / {{ diem_toi_da }} điểm</div>
-            </div>
-            </div>
-            
-        <!-- Points Card -->
-        <div class="points-card">
-            <div class="points-label">Điểm của tôi</div>
-            <div class="points-value">{{ diem }} đ</div>
-        </div>
-
-        <!-- Learning Sections -->
-        <div class="learning-sections">
-            <!-- New Words -->
-            <div class="learning-card">
-                <div class="learning-header">
-                    <div class="learning-title">
-                        <i class="fas fa-seedling" style="color: #20c997;"></i>
-                        <span>Học từ mới</span>
-                    </div>
-                    <div class="learning-points">12 đ</div>
-                </div>
-                <div class="learning-details">
-                    <div class="learning-item">
-                        <span>1</span>
-                        <span>Các từ đã thành thạo</span>
-                    </div>
-                    <div class="learning-item">
-                        <span>8</span>
-                        <span>Đã bắt đầu học</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Listening -->
-            <div class="learning-card listening">
-                <div class="learning-header">
-                    <div class="learning-title">
-                        <i class="fas fa-headphones" style="color: #e74c3c;"></i>
-                        <span>Nghe các từ đã học</span>
-                    </div>
-                    <div class="learning-points">0 đ</div>
-                </div>
-                <div class="learning-details">
-                    <div class="learning-item">
-                        <span>0</span>
-                        <span>Video mới đã xem</span>
-                    </div>
-                    <div class="learning-item">
-                        <span>0</span>
-                        <span>Đã xem lại</span>
-                    </div>
-                    </div>
-                </div>
-                
-            <!-- Using Words -->
-            <div class="learning-card using">
-                <div class="learning-header">
-                    <div class="learning-title">
-                        <i class="fas fa-comment" style="color: #3498db;"></i>
-                        <span>Dùng các từ đã học</span>
-                    </div>
-                    <div class="learning-points">30 đ</div>
-                </div>
-                <div class="learning-details">
-                    <div class="learning-item">
-                        <span>1</span>
-                        <span>Đối thoại đã hoàn thành</span>
-                    </div>
-                    <div class="learning-item">
-                        <span>0</span>
-                        <span>Đã xem lại</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Lesson Card Carousel -->
-        <div class="lesson-card">
-            <img src="https://images.unsplash.com/photo-1520986606214-8b456906c813?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="London" class="lesson-image">
-            <div class="lesson-overlay">
-                <div class="lesson-content" id="lesson-content">
-                    <!-- Nội dung bài học sẽ được JS cập nhật -->
-                </div>
-                <div class="lesson-nav lesson-prev" onclick="prevLesson()">
-                    <i class="fas fa-chevron-left"></i>
-                </div>
-                <div class="lesson-nav lesson-next" onclick="nextLesson()">
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-            </div>
-        </div>
-        <script>
-            // Dữ liệu bài học từ Django
-            const baiHocList = [
-                {% for bai in bai_hoc_list %}
-                {
-                    id: {{ bai.id }},
-                    tieuDe: "{{ bai.TieuDe|escapejs }}",
-                    type: "lesson"
-                }{% if not forloop.last %},{% endif %}
-                {% endfor %},
-                {
-                    id: "ontap",
-                    tieuDe: "Ôn tập từ vựng",
-                    type: "review"
-                }
-            ];
-            let currentIndex = 0;
-
-            function renderLesson() {
-                if (baiHocList.length === 0) {
-                    document.getElementById('lesson-content').innerHTML = `
-                        <div class="lesson-title"><i class="fas fa-seedling" style="color: #20c997;"></i> <span>Học từ mới</span></div>
-                        <div class="lesson-subtitle">Chưa có bài học</div>
-                        <button class="start-btn" disabled>Chưa có bài học</button>
-                    `;
-                    return;
-                }
-                const bai = baiHocList[currentIndex];
-                if (bai.type === "review") {
-                    document.getElementById('lesson-content').innerHTML = `
-                        <div class="lesson-title"><i class="fas fa-undo" style="color: #FFC107;"></i> <span>Ôn tập từ vựng</span></div>
-                        <div class="lesson-subtitle">Luyện tập lại các từ vựng bạn đã học để ghi nhớ lâu hơn!</div>
-                        <a href="/ontap/"><button class="start-btn">Bắt đầu ôn tập</button></a>
-                        <div class="lesson-pagination">
-                            ${baiHocList.map((_, i) => `<div class="pagination-dot${i === currentIndex ? ' active' : ''}"></div>`).join('')}
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('lesson-content').innerHTML = `
-                        <div class="lesson-title"><i class="fas fa-seedling" style="color: #20c997;"></i> <span>Học từ mới</span></div>
-                        <div class="lesson-subtitle">${bai.tieuDe}</div>
-                        <a href="/hoctumoi/${bai.id}/"><button class="start-btn">Bắt đầu</button></a>
-                        <div class="lesson-pagination">
-                            ${baiHocList.map((_, i) => `<div class="pagination-dot${i === currentIndex ? ' active' : ''}"></div>`).join('')}
-                        </div>
-                    `;
-                }
-            }
-
-            function prevLesson() {
-                if (baiHocList.length === 0) return;
-                currentIndex = (currentIndex - 1 + baiHocList.length) % baiHocList.length;
-                renderLesson();
-            }
-
-            function nextLesson() {
-                if (baiHocList.length === 0) return;
-                currentIndex = (currentIndex + 1) % baiHocList.length;
-                renderLesson();
-            }
-
-            window.onload = renderLesson;
-        </script>
+    <div class="points-card">
+        <div class="points-label">Điểm của tôi</div>
+        <div class="points-value">{{ diem }} đ</div>
     </div>
-</body>
-</html>
+
+    <div class="learned-words-card">
+        <div class="learned-words-label">Từ đã học</div>
+        <div class="learned-words-value">{{ tuvung_hoc }}</div>
+    </div>
+</div>
+{% endblock %}
