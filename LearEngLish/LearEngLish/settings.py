@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-    'homeUsers',
     'CustomAdmin',
     'chat',
+    'lecturer',
 ]
 
 MIDDLEWARE = [

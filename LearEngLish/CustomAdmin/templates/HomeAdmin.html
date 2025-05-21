@@ -1,0 +1,45 @@
+{% extends 'baseAdmin.html' %}
+{% block main-Admin%}
+    <div class="content-container">
+        <h1 class="page-title">Danh sách người dùng</h1>
+        <div class="row">
+            <div class="col-lg-12">
+                <a  class="btn btn-success" href="" style="margin-bottom: 20px;">Thêm giảng viên</a>
+            </div>
+        </div>
+        <div class="table-reponsive table-bordered">
+            <table class="table">
+                <thead>
+                    <tr class="th-head">
+                        <th>STT</th>
+                        <th>Tên người dùng</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th colspan="2" style="text-align: center;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users%}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{user.ten}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.quyen}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+{% endblock main-Admin%}
+
+<style>
+    .th-head {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+</style>

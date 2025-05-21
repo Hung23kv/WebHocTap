@@ -2,32 +2,32 @@ import json
 import random
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import NguoiDung, TienTrinh, KhoaHoc, BaiHoc, TuVung, OnTap
+from chat.models import Nguoidung,Tientrinh,Baihoc,Khoahoc,Tuvung,Ontap
 from datetime import date
 
 
-# ======================= TIỆN ÍCH =======================
+
 
 def nguoidung_dang_nhap(request):
     nguoidung_id = request.session.get('nguoidung_id')
-    return get_object_or_404(NguoiDung, id=nguoidung_id) if nguoidung_id else None
+    return get_object_or_404(Nguoidung, id=nguoidung_id) if nguoidung_id else None
 
 
 def get_cap_do_hien_tai(diem):
-    return KhoaHoc.objects.filter(DiemLenCap__lte=diem).order_by('-DiemLenCap').first()
+    return Khoahoc.objects.filter(diemlencap__lte=diem).order_by('-diemlencap').first()
 
 
 def get_cap_do_tiep_theo(diem):
-    return KhoaHoc.objects.filter(DiemLenCap__gt=diem).order_by('DiemLenCap').first()
+    return Khoahoc.objects.filter(diemlencap__gt=diem).order_by('diemlencap').first()
 
 
-# ======================= VIEW ĐĂNG NHẬP =======================
+
 
 def dang_nhap(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         matkhau = request.POST.get('matkhau')
-        nguoidung = NguoiDung.objects.filter(Email=email, MatKhau=matkhau).first()
+        nguoidung = Nguoidung.objects.filter(email=email, matkhau=matkhau).first()
 
         if nguoidung:
             request.session['nguoidung_id'] = nguoidung.id
@@ -37,7 +37,7 @@ def dang_nhap(request):
     return render(request, 'dangnhap.html')
 
 
-# ======================= VIEW HỒ SƠ NGƯỜI DÙNG =======================
+
 
 def hoso(request):
     nguoidung = nguoidung_dang_nhap(request)
@@ -88,45 +88,54 @@ def hoso(request):
     return render(request, 'hoso.html', {'user': nguoidung})
 
 
-# ======================= TRANG CHỦ =======================
-
 def trang_chu(request):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
 
-    tien_trinh = TienTrinh.objects.filter(id_nguoidung=nguoidung).first()
+    # Get or create tien_trinh
+    tien_trinh = Tientrinh.objects.filter(id_nguoidung=nguoidung).first()
     if not tien_trinh:
-        messages.error(request, "Bạn chưa có tiến trình học. Vui lòng liên hệ hỗ trợ.")
-        return redirect('dang_nhap')
+        # Get the first course (lowest level)
+        first_course = Khoahoc.objects.order_by('diemlencap').first()
+        if first_course:
+            tien_trinh = Tientrinh.objects.create(
+                id_nguoidung=nguoidung,
+                id_khoahoc=first_course,
+                diemtong=0,
+                tudahoc=0
+            )
+        else:
+            messages.error(request, "Không tìm thấy khóa học nào. Vui lòng liên hệ hỗ trợ.")
+            return redirect('dang_nhap')
 
-    cap_do = get_cap_do_hien_tai(tien_trinh.diem_tong)
-    cap_do_tiep_theo = get_cap_do_tiep_theo(tien_trinh.diem_tong)
+    cap_do = get_cap_do_hien_tai(tien_trinh.diemtong)
+    cap_do_tiep_theo = get_cap_do_tiep_theo(tien_trinh.diemtong)
 
-    diem_hien_tai = tien_trinh.diem_tong
-    diem_toi_da = cap_do_tiep_theo.DiemLenCap if cap_do_tiep_theo else diem_hien_tai
+    diem_hien_tai = tien_trinh.diemtong
+    diem_toi_da = cap_do_tiep_theo.diemlencap if cap_do_tiep_theo else diem_hien_tai
     progress_percent = min((diem_hien_tai / diem_toi_da) * 100, 100)
 
-    # Lấy tất cả bài học của cấp độ hiện tại (rất quan trọng!)
-    bai_hoc_list = BaiHoc.objects.filter(id_khoahoc=cap_do).order_by('ThuTu')
+    # Lấy tất cả bài học của cấp độ hiện tại
+    bai_hoc_list = Baihoc.objects.filter(id_khoahoc=cap_do).order_by('thutu')
 
     context = {
         'nguoidung': nguoidung,
-        'cap_do': cap_do.Ten if cap_do else "Chưa có",
+        'cap_do': cap_do.ten if cap_do else "Chưa có",
         'diem': diem_hien_tai,
         'diem_toi_da': diem_toi_da,
         'progress_percent': round(progress_percent, 2),
-        'tuvung_hoc': tien_trinh.tuvung_hoc,
-        'bai_hoc_list': bai_hoc_list,  # truyền danh sách bài học
+        'tuvung_hoc': tien_trinh.tudahoc,
+        'bai_hoc_list': bai_hoc_list,
     }
     return render(request, 'home.html', context)
 
 
-# ======================= HỌC TỪ MỚI =======================
+
 
 def hoctumoi(request, bai_hoc_id):
-    bai_hoc = get_object_or_404(BaiHoc, id=bai_hoc_id)
-    tu_vung_list = TuVung.objects.filter(id_baihoc=bai_hoc)
+    bai_hoc = get_object_or_404(Baihoc, id=bai_hoc_id)
+    tu_vung_list = Tuvung.objects.filter(id_baihoc=bai_hoc)
 
     data = [
         {
@@ -144,15 +153,15 @@ def hoctumoi(request, bai_hoc_id):
     })
 
 
-# ======================= HOÀN THÀNH BÀI HỌC =======================
+
 
 def hoan_thanh_bai_hoc(request, bai_hoc_id):
-    bai_hoc = get_object_or_404(BaiHoc, id=bai_hoc_id)
+    bai_hoc = get_object_or_404(Baihoc, id=bai_hoc_id)
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
 
-    tien_trinh = TienTrinh.objects.filter(
+    tien_trinh = Tientrinh.objects.filter(
         id_nguoidung=nguoidung,
         id_khoahoc=bai_hoc.id_khoahoc.id
     ).first()
@@ -174,16 +183,16 @@ def hoan_thanh_bai_hoc(request, bai_hoc_id):
     tien_trinh.save()
 
     # Lưu vào bảng OnTap nếu chưa có
-    if not OnTap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc=bai_hoc.id).exists():
-        OnTap.objects.create(
+    if not Ontap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc=bai_hoc.id).exists():
+        Ontap.objects.create(
             id_nguoidung=nguoidung.id,
             id_baihoc=bai_hoc.id,
             ngayLam=date.today(),
             ketQua=0
         )
 
-    tong_baihoc = BaiHoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).count()
-    bai_da_hoan_thanh = OnTap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc__in=BaiHoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).values_list('id', flat=True)).count()
+    tong_baihoc = Baihoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).count()
+    bai_da_hoan_thanh = Ontap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc__in=Baihoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).values_list('id', flat=True)).count()
 
     return render(request, 'hoanthanh.html', {
         'bai_hoc': bai_hoc,
@@ -193,13 +202,12 @@ def hoan_thanh_bai_hoc(request, bai_hoc_id):
         'bai_da_hoan_thanh': bai_da_hoan_thanh,
     })
 
-# ======================= ÔN TẬP =======================
 
 def ontap(request):
     user = nguoidung_dang_nhap(request)
-    ontap_qs = OnTap.objects.filter(id_nguoidung=user.id)
+    ontap_qs = Ontap.objects.filter(id_nguoidung=user.id)
     tu_vung_ids = ontap_qs.values_list('id_baihoc', flat=True)
-    tu_vung_list = list(TuVung.objects.filter(id_baihoc__in=tu_vung_ids))
+    tu_vung_list = list(Tuvung.objects.filter(id_baihoc__in=tu_vung_ids))
     random.shuffle(tu_vung_list)
     tu_vung_list = tu_vung_list[:10]
     data = [
@@ -218,7 +226,7 @@ def hoan_thanh_ontap(request):
     if not nguoidung:
         return redirect('dang_nhap')
 
-    tien_trinh = TienTrinh.objects.filter(id_nguoidung=nguoidung).first()
+    tien_trinh = Tientrinh.objects.filter(id_nguoidung=nguoidung).first()
     if tien_trinh:
         tien_trinh.diem_tong += 20
         tien_trinh.save()
@@ -234,18 +242,18 @@ def hoan_thanh_ontap(request):
 # ======================= BỎ QUAN BÀI HỌC =======================
 
 def bo_qua_bai_hoc(request, bai_hoc_id):
-    bai_hoc = get_object_or_404(BaiHoc, id=bai_hoc_id)
+    bai_hoc = get_object_or_404(Baihoc, id=bai_hoc_id)
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
 
-    tien_trinh = TienTrinh.objects.filter(
+    tien_trinh = Tientrinh.objects.filter(
         id_nguoidung=nguoidung,
         id_khoahoc=bai_hoc.id_khoahoc.id
     ).first()
 
     if not tien_trinh:
-        tien_trinh = TienTrinh.objects.create(
+        tien_trinh = Tientrinh.objects.create(
             id_nguoidung=nguoidung,
             id_khoahoc=bai_hoc.id_khoahoc.id,
             diem_tong=0,
@@ -253,18 +261,18 @@ def bo_qua_bai_hoc(request, bai_hoc_id):
         )
 
     # Nếu chưa hoàn thành thì cộng điểm
-    if not OnTap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc=bai_hoc.id).exists():
+    if not Ontap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc=bai_hoc.id).exists():
         tien_trinh.diem_tong += bai_hoc.Diem
         tien_trinh.save()
-        OnTap.objects.create(
+        Ontap.objects.create(
             id_nguoidung=nguoidung.id,
             id_baihoc=bai_hoc.id,
             ngayLam=date.today(),
             ketQua=0
         )
 
-    tong_baihoc = BaiHoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).count()
-    bai_da_hoan_thanh = OnTap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc__in=BaiHoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).values_list('id', flat=True)).count()
+    tong_baihoc = Baihoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).count()
+    bai_da_hoan_thanh = Ontap.objects.filter(id_nguoidung=nguoidung.id, id_baihoc__in=Baihoc.objects.filter(id_khoahoc=bai_hoc.id_khoahoc).values_list('id', flat=True)).count()
 
     return render(request, 'hoanthanh.html', {
         'bai_hoc': bai_hoc,
