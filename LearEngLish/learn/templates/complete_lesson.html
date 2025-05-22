@@ -26,12 +26,12 @@
             <div class="celebration-icon">🎉</div>
             
             <h1 class="celebration-title">Chúc mừng!</h1>
-            <p class="celebration-message">Bạn đã hoàn thành bài học từ vựng {{ bai_hoc.TieuDe }} thành công!</p>
+            <p class="celebration-message">Bạn đã hoàn thành bài học {{lesson.tieude}} thành công!</p>
 
             
             <div class="points-earned">
                 <div class="points-title">Điểm thưởng</div>
-                <div class="points-value">+{{ diem_thuong }}</div>
+                <div class="points-value">+{{ lesson.diem }}</div>
                 <div class="points-message">Tiếp tục học để tích lũy thêm điểm!</div>
             </div>
         </div>
@@ -40,10 +40,6 @@
             <h2 class="progress-title">Tiến trình học tập</h2>
             <div class="progress-bar-container">
                 <div class="progress-bar"></div>
-            </div>
-            <div class="progress-stats">
-                <span>Đã hoàn thành: {{ bai_da_hoan_thanh }}</span>
-                <span>Tổng số: {{ tong_baihoc }}</span>
             </div>
         </div>
         

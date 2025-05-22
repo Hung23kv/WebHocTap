@@ -1,0 +1,9 @@
+<ul>
+    {% for v in vocabulary %}
+        <li>
+            <strong>{{ v.tu }}</strong> - {{ v.dich }} - <em>{{ v.phatam }}</em>
+        </li>
+    {% empty %}
+        <li>Không có từ vựng nào cho bài học này.</li>
+    {% endfor %}
+</ul>

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'CustomAdmin',
     'chat',
     'lecturer',
+    'learn',
 ]
 
 MIDDLEWARE = [

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MemBot{% endblock %}</title>
+    <title>{% block title %}Home{% endblock %}</title>
     {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -129,11 +129,11 @@
                 <img src="{% static 'images/logo.jpg' %}" alt="Logo">
             </div>
             <nav class="nav-menu">
-                <a href="#" class="nav-item">
+                <a href="{% url 'trang_chu' %}" class="nav-item active">
                     <div class="nav-icon"><i class="far fa-file-alt"></i></div>
                     <span>Trang chủ</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{% url 'homeLear' %}" class="nav-item">
                     <div class="nav-icon"><i class="far fa-lightbulb"></i></div>
                     <span>Tình huống</span>
                 </a>

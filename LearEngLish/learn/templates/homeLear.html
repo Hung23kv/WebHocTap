@@ -1,0 +1,75 @@
+{% extends 'baseLear.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/homeLear.css' %}">
+{% endblock %}
+{% block content %}
+<div class="home-container">
+   
+    <h2 style="margin: 20px;">{{cap_do}}</h2>
+    <h1 style="margin: 20px;">Lộ trình khuyến nghị dành cho bạn</h1>
+    <div class="recommended-path">
+        {% for l in lesson %}
+        <div class="lesson-card">
+            <img class="lesson-img" src="{% static 'images/default_lesson.jpg' %}" alt="Ảnh bài học">
+            <div class="lesson-title">{{ l.tieude }}</div>
+            <button onclick="openLessonModal({{ l.id }}, '{{ l.tieude|escapejs }}')" type="button">Bắt đầu</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h2 style="margin: 20px;">Các hoạt động</h2>
+    
+
+    <!-- Modal hiển thị từ vựng -->
+    <div id="lessonModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="justCloseModal()">&times;</span>
+            <h2 id="modalLessonTitle"></h2>
+            <div id="modalVocabulary">
+                <!-- Từ vựng sẽ được load ở đây -->
+            </div>
+            <div style="margin-top:20px;">
+                <button onclick="markAsKnown()">Đã biết</button>
+                <button id="startLessonBtn">Làm bài</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+    let currentLessonId = null;
+    function openLessonModal(lessonId, lessonTitle) {
+        currentLessonId = lessonId;
+        document.getElementById('modalLessonTitle').innerText = lessonTitle;
+        document.getElementById('modalVocabulary').innerHTML = 'Đang tải...';
+        fetch(`/learn/vocab/${lessonId}/`)
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('modalVocabulary').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('modalVocabulary').innerHTML = '<i>Lỗi tải từ vựng</i>';
+            });
+
+        // document.getElementById('startLessonBtn').onclick = function() {
+        //     window.location.href = `/lam-bai/${lessonId}/`;
+        // };
+        document.getElementById('lessonModal').style.display = 'block';
+    }
+
+    function justCloseModal() {
+        document.getElementById('lessonModal').style.display = 'none';
+        currentLessonId = null;
+        return false;
+    }
+
+    function markAsKnown() {
+        if (currentLessonId) {
+            window.location.href = `/learn/complete_lesson/${currentLessonId}/`;
+        }
+    }
+    </script>
+{% endblock %}
