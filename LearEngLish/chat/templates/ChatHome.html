@@ -58,7 +58,11 @@
                     <span class="card-tag">Sứ mệnh</span>
             </div>
             <div class="card-content">
-                <a href= "{% url 'detailChat' item.id  %}" style = "text-decoration: none;color: blue; ">{{item.tieude}}</a>
+                {% if item.id in completed_chats %}
+                    <a href="{% url 'chat_results' item.id %}" style="text-decoration: none;color: blue;">{{item.tieude}}</a>
+                {% else %}
+                    <a href="{% url 'detailChat' item.id %}" style="text-decoration: none;color: blue;">{{item.tieude}}</a>
+                {% endif %}
             </div>
         {%endif%}
     </div>

@@ -6,10 +6,11 @@ def nguoidung_dang_nhap(request):
     nguoidung_id = request.session.get('nguoidung_id')
     return get_object_or_404(Nguoidung, id=nguoidung_id) if nguoidung_id else None
 
-
-
 def get_cap_do_tiep_theo(thutu):
     return Khoahoc.objects.filter(thutu=thutu).first()
+def dang_xuat(request):
+    request.session.clear()
+    return redirect('dang_nhap')
 
 def dang_nhap(request):
     if request.method == 'POST':
@@ -19,7 +20,16 @@ def dang_nhap(request):
 
         if nguoidung:
             request.session['nguoidung_id'] = nguoidung.id
-            return redirect('trang_chu')
+            request.session['name'] = nguoidung.ten
+            role  = nguoidung.quyen
+            role = role.strip()
+            request.session['role'] = role  
+            if role == 'admin':
+                return redirect('/Customadmin/')
+            elif role == 'lecturer':
+                return redirect('/lecturer/')
+            else:
+                return redirect('trang_chu')
         return render(request, 'dangnhap.html', {'error': 'Email hoặc mật khẩu không đúng'})
 
     return render(request, 'dangnhap.html')
@@ -120,3 +130,68 @@ def trang_chu(request):
     }
     return render(request, 'home.html', context)
 
+def ontap(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    listLession = []
+    if not nguoidung:
+        return redirect('dang_nhap')
+    ontap = Ontap.objects.filter(id_nguoidung=nguoidung)
+    for i in ontap:
+        lesson = Baihoc.objects.get(id=i.id_baihoc.id)
+        listLession.append({
+            "idLession": lesson.id,
+            "title": lesson.tieude,
+            "day" : i.ngaylam, 
+        })
+    return render(request, 'ontap.html', {'ontap': ontap, 'listLession': listLession})
+
+def reviewTest(request, lesson_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    vocabulary = list(Tuvung.objects.filter(id_baihoc=lesson_id))
+    lesson = Baihoc.objects.get(id=lesson_id)
+    
+    # Lấy trạng thái từ POST hoặc mặc định
+    current_index = int(request.POST.get('current_index', 0))
+    step = int(request.POST.get('step', 1))
+    test1_passed = request.POST.get('test1_passed', '0') == '1'
+
+    current_word = vocabulary[current_index]
+
+    if request.method == 'POST':
+        if step == 2:  # Test 1
+            answer = request.POST.get('answer')
+            if answer:  # Nếu có answer thì kiểm tra
+                if answer == current_word.tu:
+                    test1_passed = True
+                    step = 3
+                else:
+                    step = 1
+           
+        elif step == 3:  # Test 2
+            answer = request.POST.get('answer')        
+           
+            clean_answer = answer.replace("...", "").replace("…", "").strip().lower().replace(" ", "") if answer else ""
+            clean_word = current_word.tu.replace("...", "").replace("…", "").strip().lower().replace(" ", "")
+            if answer and clean_answer == clean_word:
+                # Đúng cả 2 test, sang từ mới
+                if current_index + 1 < len(vocabulary):
+                    current_index += 1
+                    step = 1
+                    current_word = vocabulary[current_index]
+                    test1_passed = False
+                else:
+                    return render(request, 'reviewTest.html', {'done': True, 'lesson': lesson})
+            else:
+                step = 1
+    context = {
+        'lesson': lesson,
+        'current_word': current_word,
+        'current_index': current_index,
+        'step': step,
+        'test1_passed': test1_passed,
+        'vocabulary': vocabulary,
+        'total': len(vocabulary),
+    }
+    return render(request, 'reviewTest.html', context)

@@ -64,18 +64,10 @@ def takeTest(request, lesson_id):
                     step = 1
             # Nếu không có answer (từ step 1 chuyển sang) thì giữ nguyên step = 2
         elif step == 3:  # Test 2
-            answer = request.POST.get('answer')
-            print("Debug values:")
-            print(f"Original answer: '{answer}'")
-            print(f"Original current_word.tu: '{current_word.tu}'")
-            
+            answer = request.POST.get('answer')        
             # Remove both types of ellipsis and clean the strings
             clean_answer = answer.replace("...", "").replace("…", "").strip().lower().replace(" ", "") if answer else ""
             clean_word = current_word.tu.replace("...", "").replace("…", "").strip().lower().replace(" ", "")
-            
-            print(f"Cleaned answer: '{clean_answer}'")
-            print(f"Cleaned word: '{clean_word}'")
-            
             if answer and clean_answer == clean_word:
                 # Đúng cả 2 test, sang từ mới
                 if current_index + 1 < len(vocabulary):

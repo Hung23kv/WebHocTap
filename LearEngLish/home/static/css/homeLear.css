@@ -1,0 +1,66 @@
+.home-container { padding: 20px; }
+
+.recommended-path {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.lesson-card {
+    flex: 1 0 21%; /* 4 card mỗi hàng, trừ đi gap */
+    max-width: 23%; /* Đảm bảo không vượt quá 4 card/hàng */
+    min-width: 200px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #ececec;
+    border: 1.5px solid #bdbdbd;
+    box-sizing: border-box;
+    position: relative;
+    transition: box-shadow 0.2s;
+    padding-top: 20px;
+    min-height: 120px;
+    padding-right: 80px; /* Thêm padding phải để tránh ảnh */
+}
+.lesson-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.lesson-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    word-break: break-word;
+    white-space: normal;
+    /* Đảm bảo chữ không bị ảnh đè */
+}
+button {
+    background: #FFD600;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.lesson-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #fff;
+    border: 2px solid #FFD600;
+}
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; width: 100%; height: 100%;
+    overflow: auto; background: rgba(0,0,0,0.3);
+}
+.modal-content {
+    background: #fff; margin: 5% auto; padding: 20px; border-radius: 10px;
+    width: 400px; max-width: 90%; position: relative;
+}
+.close {
+    position: absolute; right: 15px; top: 10px; font-size: 28px; cursor: pointer;
+}

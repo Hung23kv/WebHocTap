@@ -7,28 +7,16 @@ from deep_translator import GoogleTranslator
 from decouple import config
 import openai
 import traceback
+from home.views import nguoidung_dang_nhap
 
 # Create your views here.
 def homeChat(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
     data = Doithoai.objects.all()
-    return render(request,'ChatHome.html',{"Listchat": data})
-def Login(request):
-    if request.method == "POST":
-        EmailLog = request.POST.get('user')
-        password = request.POST.get('passw')
-        Log = Nguoidung.objects.filter(email = EmailLog,matkhau = password).first()
-        if Log:
-            request.session['name'] = Log.ten
-            role  = Log.quyen
-            role = role.strip()
-            request.session['role'] = role  
-            if role == 'admin':
-                return redirect('/admin/')
-            return redirect('homeChat')
-        else:
-            messages.error(request, 'Nhập sai thông tin tài khoản!')
-        
-    return render(request,'Login.html')
+    completed_chats = set(Traloi.objects.filter(id_nguoidung=nguoidung).values_list('id_cauhoi__id_doithoai', flat=True))
+    return render(request,'ChatHome.html',{"Listchat": data,"completed_chats": completed_chats})
 def get_gpt_suggestions(question):
     try:
         openai.api_key = config('OPENAI_API_KEY')
@@ -55,9 +43,6 @@ def get_gpt_suggestions(question):
 
 def ChatDetail(request, id):
     user = request.session.get('name')
-    if not user:
-        return redirect('Login')
-
     dataDoiThoai = Doithoai.objects.get(id=id)
     ngay = date.today().strftime('%Y-%m-%d')
     id_user = Nguoidung.objects.get(ten=user)
@@ -161,7 +146,7 @@ def creatChat(request):
 def ChatUser(request,id):
     user = request.session.get('name')
     if not user:
-        return redirect('Login')
+        return redirect('dang_nhap')
     user = request.session.get('name')
     data = Doithoai.objects.get(id = id)
     id_user = Nguoidung.objects.get(ten = user)
@@ -183,3 +168,33 @@ def ChatUser(request,id):
             messages.error(request, f"Translation error: {str(e)}")
     
     return render(request,"ChatUser.html",{"detail":data,"host":id_user,"messages": messages})
+
+def chat_results(request, id):
+    user = request.session.get('name')
+    
+    dataDoiThoai = Doithoai.objects.get(id=id)
+    id_user = Nguoidung.objects.get(ten=user)
+    
+    cauhois = Thoai.objects.filter(id_doithoai=id).order_by('id')
+    
+    tralois = Traloi.objects.filter(
+        id_nguoidung=id_user,
+        id_cauhoi__in=cauhois
+    ).order_by('id_cauhoi')
+    
+    results = []
+    for cauhoi in cauhois:
+        traloi = tralois.filter(id_cauhoi=cauhoi).first()
+        results.append({
+            'question': cauhoi.cauhoi,
+            'answer': traloi.noidung if traloi else None,
+            'date': traloi.ngaygui if traloi else None
+        })
+    
+    return render(request, 'ChatResults.html', {
+        "Chat": dataDoiThoai,
+        "results": results,
+        "has_completed": len(tralois) > 0
+    })
+
+

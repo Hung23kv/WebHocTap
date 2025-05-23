@@ -1,0 +1,26 @@
+{% extends 'baseUsers.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/homeLear.css' %}">
+{% endblock %}
+{% block content %}
+<div class="home-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px;">
+        <h1 style="margin: 0;">Các bài học đã hoàn thành</h1>
+        <a href="{% url 'trang_chu' %}" style="text-decoration: none; color: #333; padding: 8px 16px; border: 1px solid red; border-radius: 4px;">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+    <div class="recommended-path">
+        {% for l in listLession %}
+        <div class="lesson-card">
+            <img class="lesson-img" src="{% static 'images/default_lesson.jpg' %}" alt="Ảnh bài học">
+            <div class="lesson-title">{{ l.title }}  </div>
+            <div class="lesson-title" style="color: blueviolet;">Hoàn thành ngày  {{ l.day|date:"d/m/Y" }}</div>
+            <a href="{% url 'reviewTest' l.idLession %}" class="btn btn-info">Bắt đầu</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

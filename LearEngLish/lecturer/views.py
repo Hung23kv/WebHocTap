@@ -5,12 +5,23 @@ from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
 import os
 from django.utils import timezone
+from home.views import nguoidung_dang_nhap
 
 # Create your views here.
 def homeLecturer(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen != 'lecturer':
+        return redirect('dang_nhap')
     return render(request,'HomeLecturer.html')
 
 def manageLession(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen != 'lecturer':
+        return redirect('dang_nhap')
     coures = Khoahoc.objects.all()
     context = {
         'coures':coures,
@@ -27,6 +38,7 @@ def manageLession(request):
             })
     return render(request,'ManageLession.html',context)
 def manage_vocab(request, lesson_id):
+
     lesson = Baihoc.objects.get(id=lesson_id)
     vocab_list = Tuvung.objects.filter(id_baihoc=lesson)
     
@@ -150,6 +162,11 @@ def add_lesson(request):
     return redirect('manage-lession')
 
 def manage_conversation(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen != 'lecturer':
+        return redirect('dang_nhap')
     conversations = Doithoai.objects.exclude(muctieu='Trò chuyện')
     return render(request, 'manage_conversation.html', {'conversations': conversations})
 
@@ -179,6 +196,11 @@ def add_conversation(request):
     return render(request, 'add_conversation.html')
 
 def manage_dialogue(request, conversation_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen != 'lecturer':
+        return redirect('dang_nhap')
     conversation = Doithoai.objects.get(id=conversation_id)
     dialogues = Thoai.objects.filter(id_doithoai=conversation)
     
@@ -242,4 +264,3 @@ def delete_vocab(request, vocab_id):
     
     vocab.delete()
     return redirect('manage_vocab', lesson_id=lesson_id)
-

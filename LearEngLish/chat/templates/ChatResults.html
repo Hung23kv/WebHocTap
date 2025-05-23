@@ -1,0 +1,42 @@
+
+{% load static %}
+
+
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ChatResults.css' %}">
+{% endblock %}
+
+{% block header_title %}
+    <h1 style="text-align: center;margin: 20px;color: brown;">Kết quả </h1>
+{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="header">
+        <a href="{% url 'homeChat' %}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại trang chủ
+        </a>
+        <h2>{{ Chat.tieude }}</h2>
+    </div>
+
+    {% if has_completed %}
+        <div class="results-list">
+            {% for result in results %}
+            <div class="result-item">
+                <div class="question">
+                    <h3>Câu hỏi:</h3>
+                    <p>{{ result.question }}</p>
+                </div>
+                <div class="answer">
+                    <h3>Câu trả lời của bạn:</h3>
+                    <p>{{ result.answer }}</p>
+                    <small>Ngày: {{ result.date|date:"d/m/Y" }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

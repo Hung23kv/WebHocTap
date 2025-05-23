@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Làm bài từ vựng</title>
+    <link rel="stylesheet" href="/static/css/takeTest.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <img src="/static/images/logo.png" alt="Logo" class="logo">
+        <div class="header-title"><p>{{lesson.tieude}}</p></div>
+        <button class="back-btn" onclick="window.location.href='/ontap/'">Quay lại</button>
+    </div>
+    {% if error %}
+        <p style="color: red; text-align: center; font-size: 24px; font-weight: bold;">{{ error }}</p>
+    {% endif %}
+    <div class="container">
+        {% if done %}
+            <div class="center">
+                <a class="submit-btn" href="{% url 'ontap' %}">Hoàn thành </a>
+            </div>
+        {% else %}
+            <div style="text-align:center; margin-bottom: 50px;">
+                <span style="font-size:18px; color:#1abc9c; font-weight:bold;">Câu {{ current_index|add:1 }}/{{ total }}</span>
+            </div>
+        {% endif %}
+        
+        {% if step == 1 %}
+        <!-- Bước 1: Hiện thong tin từ -->
+        <form method="post">
+            {% csrf_token %}
+            <div class="step-title">Ghi nhớ từ sau</div>
+            <div class="word">{{current_word.tu}}</div>
+            {% if current_word.phatam %}
+                <div class="word">/{{current_word.phatam}}/</div>
+            {% endif %}
+            <div class="word">{{current_word.dich}}</div>
+            <input type="hidden" name="current_index" value="{{current_index}}">
+            <input type="hidden" name="step" value="2">
+            <input type="hidden" name="test1_passed" value="{% if test1_passed %}1{% else %}0{% endif %}">
+            <div class="center">
+                <button class="submit-btn" type="submit">Tiếp tục</button>
+            </div>
+        </form>
+        {% elif step == 2 %}
+        <!-- Test 1: Chọn từ đúng với hình ảnh hoặc phát âm -->
+        <form method="post">
+            {% csrf_token %}
+            {% if current_word.hinhanh %}
+                <div class="step-title">Chọn từ đúng với hình ảnh</div>
+                <img class="img-word" src="{{current_word.hinhanh}}" alt="img">
+            {% else %}
+                <div class="step-title">Chọn từ đúng với phát âm</div>
+                <div class="word">/{{current_word.phatam}}/</div>
+            {% endif %}
+            <div class="choices">
+                {% comment %} Sinh 3 đáp án sai ngẫu nhiên {% endcomment %}
+                {% with all_words=vocabulary|dictsort:'tu' %}
+                {% for w in all_words %}
+                    {% if w.tu != current_word.tu and forloop.counter <= 3 %}
+                        <button class="choice-btn" type="submit" name="answer" value="{{w.tu}}">{{w.tu}}</button>
+                    {% endif %}
+                {% endfor %}
+                {% endwith %}
+                <button class="choice-btn" type="submit" name="answer" value="{{current_word.tu}}">{{current_word.tu}}</button>
+            </div>
+            <input type="hidden" name="current_index" value="{{current_index}}">
+            <input type="hidden" name="step" value="2">
+            <input type="hidden" name="test1_passed" value="{% if test1_passed %}1{% else %}0{% endif %}">
+        </form>
+        {% elif step == 3 %}
+        <!-- Test 2: Nhập từ tiếng Anh -->
+        <form method="post">{% csrf_token %}
+            <div class="step-title">Nhập từ tiếng Anh cho nghĩa sau</div>
+            <div class="word" style="font-size:24px;">{{current_word.dich}}</div>
+            <input class="input-answer" type="text" name="answer" placeholder="Nhập từ tiếng Anh..." autocomplete="off">
+            <input type="hidden" name="current_index" value="{{current_index}}">
+            <input type="hidden" name="step" value="3">
+            <input type="hidden" name="test1_passed" value="{% if test1_passed %}1{% else %}0{% endif %}">
+            <div class="center">
+                <button class="submit-btn" type="submit">Kiểm tra</button>
+            </div>
+            
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>
+

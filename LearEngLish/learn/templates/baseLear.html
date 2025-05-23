@@ -157,8 +157,7 @@
                 </div>
                 <div class="header-icons">
                     {% block header_icons %}
-                    <i class="fas fa-chart-bar"></i>
-                    <i class="fas fa-clipboard-list"></i>
+                    <i>{{ request.session.name }}</i>
                     <div class="user-avatar" id="userAvatarDropdown">
                         <i class="fas fa-user-circle"></i>
                         <div class="dropdown-menu">
@@ -167,7 +166,7 @@
                                 <span>Thông tin cá nhân</span>
                             </a>
                             
-                            <a href="" class="dropdown-item">
+                            <a href="{% url 'dang_xuat' %}" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <span>Đăng xuất</span>
                             </a>
