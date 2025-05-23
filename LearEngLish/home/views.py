@@ -1,12 +1,6 @@
-import json
-import random
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from chat.models import Nguoidung,Tientrinh,Baihoc,Khoahoc,Tuvung,Ontap
-from datetime import date
-
-
-
 
 def nguoidung_dang_nhap(request):
     nguoidung_id = request.session.get('nguoidung_id')
@@ -14,11 +8,8 @@ def nguoidung_dang_nhap(request):
 
 
 
-def get_cap_do_tiep_theo(diem):
-    return Khoahoc.objects.filter(diemlencap__gt=diem).order_by('diemlencap').first()
-
-
-
+def get_cap_do_tiep_theo(thutu):
+    return Khoahoc.objects.filter(thutu=thutu).first()
 
 def dang_nhap(request):
     if request.method == 'POST':
@@ -32,7 +23,6 @@ def dang_nhap(request):
         return render(request, 'dangnhap.html', {'error': 'Email hoặc mật khẩu không đúng'})
 
     return render(request, 'dangnhap.html')
-
 
 
 def hoso(request):
@@ -102,41 +92,31 @@ def trang_chu(request):
         else:
             messages.error(request, "Không tìm thấy khóa học nào. Vui lòng liên hệ hỗ trợ.")
             return redirect('dang_nhap')
-
-    cap_do_tiep_theo = get_cap_do_tiep_theo(tien_trinh.diemtong)
+    khoahoc = Khoahoc.objects.get(id=tien_trinh.id_khoahoc.id)
+    next = int(khoahoc.thutu) + 1
+    cap_do_tiep_theo = get_cap_do_tiep_theo(next)
     cap_do = tien_trinh.id_khoahoc.ten 
     diem_hien_tai = tien_trinh.diemtong
-    diem_toi_da = cap_do_tiep_theo.diemlencap if cap_do_tiep_theo else diem_hien_tai
+    diem_toi_da = tien_trinh.id_khoahoc.diemlencap if tien_trinh.id_khoahoc.diemlencap else 1
     progress_percent = min((diem_hien_tai / diem_toi_da) * 100, 100) if diem_toi_da else 100
+    ontap = Ontap.objects.filter(id_nguoidung=nguoidung)
+
+    # Kiểm tra nếu người dùng đã đạt đủ điểm để lên cấp
+    if cap_do_tiep_theo and diem_hien_tai >= tien_trinh.id_khoahoc.diemlencap:
+        tien_trinh.id_khoahoc = cap_do_tiep_theo
+        tien_trinh.diemtong = 0  
+        tien_trinh.save()
+        messages.success(request, f'🎉 Chúc mừng! Bạn đã lên {cap_do_tiep_theo.ten}!')
+        return redirect('trang_chu')
 
     context = {
         'nguoidung': nguoidung,
         'cap_do': cap_do,
         'diem': diem_hien_tai,
+        'ontap': ontap,
         'diem_toi_da': diem_toi_da,
         'progress_percent': round(progress_percent, 2),
         'tuvung_hoc': tien_trinh.tudahoc,
     }
     return render(request, 'home.html', context)
 
-
-
-
-def hoctumoi(request, bai_hoc_id):
-    bai_hoc = get_object_or_404(Baihoc, id=bai_hoc_id)
-    tu_vung_list = Tuvung.objects.filter(id_baihoc=bai_hoc)
-
-    data = [
-        {
-            'Tu': tv.Tu,
-            'Dich': tv.Dich,
-            'HinhAnh': str(tv.HinhAnh),
-            'PhatAm': str(tv.PhatAm),
-            'BaiHoc_id': tv.id_baihoc.id
-        } for tv in tu_vung_list
-    ]
-
-    return render(request, 'hoctumoi.html', {
-        'bai_hoc': bai_hoc,
-        'tu_vung_list': json.dumps(data, ensure_ascii=False)
-    })

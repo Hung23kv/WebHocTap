@@ -12,7 +12,7 @@
         {% for l in lesson %}
         <div class="lesson-card">
             <img class="lesson-img" src="{% static 'images/default_lesson.jpg' %}" alt="Ảnh bài học">
-            <div class="lesson-title">{{ l.tieude }}</div>
+            <div class="lesson-title">{{ l.tieude }} - {{ l.diem }} điểm</div>
             <button onclick="openLessonModal({{ l.id }}, '{{ l.tieude|escapejs }}')" type="button">Bắt đầu</button>
         </div>
         {% endfor %}
@@ -54,9 +54,9 @@
                 document.getElementById('modalVocabulary').innerHTML = '<i>Lỗi tải từ vựng</i>';
             });
 
-        // document.getElementById('startLessonBtn').onclick = function() {
-        //     window.location.href = `/lam-bai/${lessonId}/`;
-        // };
+        document.getElementById('startLessonBtn').onclick = function() {
+            window.location.href = `/learn/takeTest/${lessonId}/`;
+        };
         document.getElementById('lessonModal').style.display = 'block';
     }
 

@@ -45,6 +45,7 @@ class Khoahoc(models.Model):
     ten = models.CharField(db_column='Ten', max_length=50, blank=True, null=True)  # Field name made lowercase.
     ngaytao = models.DateField(db_column='NgayTao', blank=True, null=True)  # Field name made lowercase.
     diemlencap = models.IntegerField(db_column='DiemLenCap', blank=True, null=True)  # Field name made lowercase.
+    thutu = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
