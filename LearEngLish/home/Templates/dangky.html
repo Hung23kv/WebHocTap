@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký - Học Tiếng Anh Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dangnhap.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="login-image">
+            <h2>Học Tiếng Anh Online</h2>
+            <p>Nền tảng học tiếng Anh hiện đại giúp bạn thành thạo ngôn ngữ một cách nhanh chóng và hiệu quả.</p>
+            <ul class="features">
+                <li><i class="fas fa-check-circle"></i> Học mọi lúc, mọi nơi</li>
+                <li><i class="fas fa-check-circle"></i> Các bài học chất lượng</li>
+                <li><i class="fas fa-check-circle"></i> Phương pháp học hiệu quả</li>
+            </ul>
+        </div>
+        <div class="login-form">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>EnglishMaster</h1>
+            </div>
+            <h2>Đăng Ký</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if not otp_sent %}
+            <form action="{% url 'dang_ky' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="ten">Họ và tên</label>
+                    <input type="text" id="ten" name="ten" placeholder="Nhập họ và tên" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Nhập email" required>
+                </div>
+                <div class="form-group">
+                    <label for="matkhau">Mật khẩu</label>
+                    <input type="password" id="matkhau" name="matkhau" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <label for="sdt">Số điện thoại</label>
+                    <input type="tel" id="sdt" name="sdt" placeholder="Nhập số điện thoại" required>
+                </div>
+                <button type="submit" name="send_otp" class="login-button">Gửi mã OTP</button>
+                <div class="register">
+                    <p>Đã có tài khoản? <a href="{% url 'dang_nhap' %}">Đăng nhập</a></p>
+                </div>
+            </form>
+            {% else %}
+            <form action="{% url 'dang_ky' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="otp">Nhập mã OTP</label>
+                    <input type="text" id="otp" name="otp" placeholder="Nhập mã OTP" required>
+                </div>
+                <button type="submit" name="verify_otp" class="login-button">Xác nhận</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

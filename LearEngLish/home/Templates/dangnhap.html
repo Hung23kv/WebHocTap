@@ -40,11 +40,11 @@
                         <input type="checkbox" id="remember" name="remember">
                         <label for="remember">Ghi nhớ đăng nhập</label>
                     </div>
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    <a href="{% url 'quen_mat_khau' %}" class="forgot-password">Quên mật khẩu?</a>
                 </div>
                 <button type="submit" class="login-button">Đăng Nhập</button>
                 <div class="register">
-                    <p>Chưa có tài khoản? <a href="#">Đăng ký ngay</a></p>
+                    <p>Chưa có tài khoản? <a href="{% url 'dang_ky' %}">Đăng ký ngay</a></p>
                 </div>
             </form>
         </div>

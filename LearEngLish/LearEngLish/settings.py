@@ -50,10 +50,6 @@ ASGI_APPLICATION = 'LearEngLish.asgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
-        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        # 'CONFIG': {
-        #     "hosts": [('127.0.0.1', 6379)],
-        # },
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
@@ -87,7 +83,16 @@ TEMPLATES = [
 ]
 
 # WSGI_APPLICATION = 'LearEngLish.wsgi.application'
-
+# Email settings
+import os
+from dotenv import load_dotenv
+load_dotenv()
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER') 
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

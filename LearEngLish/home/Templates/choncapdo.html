@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chọn Cấp Độ - Học Tiếng Anh Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/dangnhap.css' %}">
+    <style>
+        .level-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e0e0e0;
+        }
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        .level-card.selected {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+        }
+        .level-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .level-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .level-details {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .level-details i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .level-points {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .level-lessons {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-image">
+            <h2>Học Tiếng Anh Online</h2>
+            <p>Chọn cấp độ phù hợp với khả năng tiếng Anh của bạn để bắt đầu hành trình học tập.</p>
+            <ul class="features">
+                <li><i class="fas fa-check-circle"></i> Học đúng trình độ</li>
+                <li><i class="fas fa-check-circle"></i> Tiến bộ nhanh chóng</li>
+                <li><i class="fas fa-check-circle"></i> Lộ trình phù hợp</li>
+            </ul>
+        </div>
+        <div class="login-form">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>EnglishMaster</h1>
+            </div>
+            <h2>Chọn Cấp Độ Của Bạn</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'chon_cap_do' %}" method="post">
+                {% csrf_token %}
+                <div class="level-options">
+                    {% for khoa in khoahoc %}
+                        <div class="level-card" onclick="selectLevel(this, '{{ khoa.id }}')">
+                            <div class="level-title">{{ khoa.ten }}</div>
+                            <div class="level-description">{{ khoa.mota }}</div>
+                            <input type="radio" name="khoahoc_id" value="{{ khoa.id }}" style="display: none;">
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="login-button">Bắt Đầu Học</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function selectLevel(card, value) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.level-card').forEach(c => c.classList.remove('selected'));
+            // Add selected class to clicked card
+            card.classList.add('selected');
+            // Set the radio button value
+            card.querySelector('input[type="radio"]').checked = true;
+        }
+    </script>
+</body>
+</html>
