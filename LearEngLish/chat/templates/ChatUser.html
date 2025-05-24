@@ -59,6 +59,34 @@
     .back-button i {
         margin-right: 8px;
     }
+
+    .message {
+        margin: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 70%;
+    }
+    
+    .user-message {
+        background-color: #007bff;
+        color: white;
+        margin-left: auto;
+    }
+    
+    .other-message {
+        background-color: #e9ecef;
+        color: black;
+        margin-right: auto;
+    }
+    
+    .message-header {
+        font-size: 0.8em;
+        margin-bottom: 5px;
+    }
+    
+    .message-content {
+        word-wrap: break-word;
+    }
 </style>
 {% endblock %}
 
@@ -86,39 +114,110 @@
 {% block content %}
 <br>
 <p class="text" style="text-align: center; color: blue;">Tiêu đề: {{detail.tieude}}</p>
-<main class="main-content">
-    <!-- Chat Messages -->
+<main class="main-content" id="chat-messages">
     {% for msg in messages %}
-        {% if msg.nguoigui.id == host.id %}
-            <div class="message user-message" style="margin:10px">
-                <div class="message-content">
-                    <p class="english">{{ msg.tinnhan }}</p>
-                </div>
+        <div class="message {% if msg.nguoigui.id == host.id %}user-message{% else %}other-message{% endif %}">
+            <div class="message-header">
+                {% if msg.nguoigui.id == host.id %}
+                    Me
+                {% else %}
+                    {{ msg.nguoigui.ten }}
+                {% endif %}
             </div>
-        {% else %}
-            <div class="message bot-message" style="margin:10px" >
-                <div class="message-content">
-                    <p>{{ msg.tinnhan }}</p>
-                </div>
+            <div class="message-content">
+                <p>{{ msg.tinnhan }}</p>
             </div>
-        {% endif %}
+        </div>
     {% endfor %}
 </main>
 
 <!-- Chat Input -->
 <div class="chat-input-container">
     <div class="chat-input-area">
-        <form method="post"> 
+        <form method="post" id="chat-form">
             {% csrf_token %}
-            <!-- Lưu trữ dữ liệu qua hidden fields -->
-            <input type="hidden" name="current_index" value="{{ current_index }}">
-            <input type="hidden" name="reply_data" value="{{ reply_data }}">
-            
             <div class="input-field">
-                <input type="text" placeholder="Nhập tin nhắn của bạn..." name="ChatContent">
+                <input type="text" id="chat-message-input" name="ChatContent" placeholder="Nhập tin nhắn của bạn...">
                 <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/{{ room_id }}/'
+    );
+
+    chatSocket.onopen = function(e) {
+        console.log('WebSocket connection established');
+    };
+
+    chatSocket.onclose = function(e) {
+        console.log('WebSocket connection closed');
+        console.log('Close code:', e.code);
+        console.log('Close reason:', e.reason);
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const messagesDiv = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        
+        messageDiv.className = `message ${data.user_id == {{ host.id }} ? 'user-message' : 'other-message'}`;
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                ${data.user_id == {{ host.id }} ? 'Me' : data.username}
+            </div>
+            <div class="message-content">
+                <p>${data.translated_message}</p>
+            </div>
+        `;
+        
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    };
+
+    document.querySelector('#chat-form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('#chat-message-input');
+        const message = messageInput.value;
+        
+        if (message) {
+            // Gửi tin nhắn đến server qua AJAX
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Gửi tin nhắn đã dịch qua WebSocket
+                    chatSocket.send(JSON.stringify({
+                        'message': message,
+                        'translated_message': data.translated_message,
+                        'user_id': {{ host.id }},
+                        'username': '{{ host.ten }}'
+                    }));
+                    messageInput.value = '';
+                } else {
+                    console.error('Error saving message:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    };
+</script>
 {% endblock %}

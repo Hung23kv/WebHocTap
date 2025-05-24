@@ -8,6 +8,7 @@ from decouple import config
 import openai
 import traceback
 from home.views import nguoidung_dang_nhap
+from django.http import JsonResponse
 
 # Create your views here.
 def homeChat(request):
@@ -143,31 +144,50 @@ def creatChat(request):
         doiThoai.save()
         return redirect('chatuser', id = doiThoai.id )
     return render(request, 'creatChat.html')
-def ChatUser(request,id):
+def ChatUser(request, id):
     user = request.session.get('name')
     if not user:
         return redirect('dang_nhap')
-    user = request.session.get('name')
-    data = Doithoai.objects.get(id = id)
-    id_user = Nguoidung.objects.get(ten = user)
+    
+    data = Doithoai.objects.get(id=id)
+    id_user = Nguoidung.objects.get(ten=user)
     messages = Dtnguoidung.objects.filter(id_doithoai=data).order_by('ngay')
     
     if request.method == 'POST':
         chat_content = request.POST.get('ChatContent')
         try:
+            # Dịch tin nhắn sang tiếng Anh
             translated_text = GoogleTranslator(source='vi', target='en').translate(chat_content)
             
+            # Lưu tin nhắn đã dịch vào database
             new_message = Dtnguoidung(
                 nguoigui=id_user,
-                tinnhan=translated_text,
+                tinnhan=translated_text,  # Lưu bản dịch tiếng Anh
                 ngay=date.today(),
                 id_doithoai=data
             )
             new_message.save()
+            
+            # Return JSON response for AJAX requests
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'translated_message': translated_text,  # Gửi bản dịch tiếng Anh
+                    'user_id': id_user.id,
+                    'username': id_user.ten
+                })
+                
         except Exception as e:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': str(e)})
             messages.error(request, f"Translation error: {str(e)}")
     
-    return render(request,"ChatUser.html",{"detail":data,"host":id_user,"messages": messages})
+    return render(request, "ChatUser.html", {
+        "detail": data,
+        "host": id_user,
+        "messages": messages,
+        "room_id": id
+    })
 
 def chat_results(request, id):
     user = request.session.get('name')
