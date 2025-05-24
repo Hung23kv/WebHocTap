@@ -9,6 +9,8 @@ import openai
 import traceback
 from home.views import nguoidung_dang_nhap
 from django.http import JsonResponse
+import requests
+from django.conf import settings
 
 # Create your views here.
 def homeChat(request):
@@ -20,24 +22,44 @@ def homeChat(request):
     return render(request,'ChatHome.html',{"Listchat": data,"completed_chats": completed_chats})
 def get_gpt_suggestions(question):
     try:
-        openai.api_key = config('OPENAI_API_KEY')
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
+        # OpenRouter API endpoint
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        
+        # Headers with API key
+        headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "http://localhost:8000",  # Thay đổi URL này theo domain của bạn
+            "X-Title": "EnglishMaster"  # Tên ứng dụng của bạn
+        }
+        
+        # Request body
+        data = {
+            "model": "deepseek/deepseek-prover-v2:free",
+            "messages": [
                 {
                     "role": "user",
                     "content": f"Provide 3 different ways to answer this question: '{question}'. Format as: answer1 @ answer2 @ answer3"
                 }
             ],
-            temperature=0.7,
-            max_tokens=150
-        )
-        suggestion_raw = response.choices[0].message['content'].strip()
-        # Tách chuỗi ra danh sách
+            "temperature": 0.7,
+            "max_tokens": 150
+        }
+        
+        # Make API request
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()  # Raise exception for bad status codes
+        
+        # Parse response
+        result = response.json()
+        suggestion_raw = result['choices'][0]['message']['content'].strip()
+        
+        # Split string into list
         suggestion_list = [s.strip() for s in suggestion_raw.split('@') if s.strip()]
         return suggestion_list if suggestion_list else ["Example 1", "Example 2", "Example 3"]
+        
     except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
+        print(f"OpenRouter API Error: {str(e)}")
         traceback.print_exc()
         return ["Could not generate suggestions", "Please try again", "Check your API key"]
 
