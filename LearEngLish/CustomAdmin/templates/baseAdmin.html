@@ -351,19 +351,7 @@
         </div>
         
         <div class="sidebar-nav">
-            <!-- <div class="nav-section ">
-                <div class="nav-section-header">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Quản lý nhà xe</span>
-                    <i class="fas fa-chevron-left toggle-icon"></i>
-                </div>
-                <div class="nav-submenu">
-                    <a href="" class="nav-submenu-item">Quản lý xe</a>
-                    <a href="" class="nav-submenu-item">Quản lý tuyến đi</a>
-                    <a href="" class="nav-submenu-item ">Quản lý chuyến đi</a>
-                </div>
-            </div> -->
-            <a href="{%url 'admin' %}" class="nav-link">
+            <a href="{%url 'Customadmin' %}" class="nav-link">
                 <i class="fas fa-users"></i>
                 <span>Quản lý người dùng</span>
             </a>
@@ -373,7 +361,7 @@
                 <span>Quản lý khóa học</span>
             </a>
             
-            <a href="#" class="nav-link logout">
+            <a href="{% url 'dang_xuat' %}" class="nav-link logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Đăng xuất</span>
             </a>

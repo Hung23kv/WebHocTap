@@ -363,8 +363,13 @@
                     <a href="{% url 'manage-conversation' %}" class="nav-submenu-item">Quản lý cuộc đối thoại</a>
                 </div>
             </div>
+
+            <a href="{% url 'track_students' %}" class="nav-link">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Theo dõi người học</span>
+            </a>
              
-            <a href="#" class="nav-link logout">
+            <a href="{% url 'dang_xuat' %}" class="nav-link logout">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Đăng xuất</span>
             </a>
@@ -389,7 +394,7 @@
                     <div class="user-dropdown-menu">
                         <a href="#" class="dropdown-item">Thông tin cá nhân</a>
                         <a href="#" class="dropdown-item">Cài đặt</a>
-                        <a href="#" class="dropdown-item">Đăng xuất</a>
+                        <a href="{% url 'dang_xuat' %}" class="dropdown-item">Đăng xuất</a>
                     </div>
                 </div>
             </div>

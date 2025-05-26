@@ -29,15 +29,14 @@ def dang_nhap(request):
             role = role.strip()
             request.session['role'] = role  
             if role == 'admin':
-                return redirect('/Customadmin/')
+                return redirect('Customadmin')
             elif role == 'lecturer':
-                return redirect('/lecturer/')
-            else:
+                return redirect('lecturer')
+            else:  # student hoặc role khác
                 tien_trinh = Tientrinh.objects.filter(id_nguoidung=nguoidung).first()
                 if not tien_trinh:
                     return redirect('chon_cap_do')
-                else:
-                    return redirect('trang_chu')
+                return redirect('trang_chu')
         return render(request, 'dangnhap.html', {'error': 'Email hoặc mật khẩu không đúng'})
 
     return render(request, 'dangnhap.html')

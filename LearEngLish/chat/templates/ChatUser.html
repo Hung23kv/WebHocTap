@@ -101,8 +101,8 @@
 {% endblock %}
 
 {% block header_title %}
-{% if host.id == data.nguoitao.id %}
-    <a href="" class="delete-button">
+{% if host.id == detail.nguoitao.id %}
+    <a href="{% url 'deleteChatuser' detail.id %}" class="delete-button">
         <i class="fa-solid fa-trash"></i>
         Hủy
     </a>

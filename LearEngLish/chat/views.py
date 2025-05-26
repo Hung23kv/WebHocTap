@@ -239,4 +239,10 @@ def chat_results(request, id):
         "has_completed": len(tralois) > 0
     })
 
-
+def deleteChatuser(request, id):
+    user = request.session.get('name')
+    if not user:
+        return redirect('dang_nhap')
+    data = Doithoai.objects.get(id=id)
+    data.delete()
+    return redirect('homeChat')

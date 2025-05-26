@@ -1,0 +1,71 @@
+{% extends 'baseAdmin.html' %}
+{% block main-Admin%}
+<div class="content-container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-title">Thêm Khóa Học Mới</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="{% url 'addCourse' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="ten" class="form-label">Tên khóa học</label>
+                            <input type="text" class="form-control" id="ten" name="ten" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="diemlencap" class="form-label">Điểm học lên cấp</label>
+                            <input type="number" class="form-control" id="diemlencap" name="diemlencap" required min="0" max="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="thutu" class="form-label">Thứ tự khóa học</label>
+                            <input type="number" class="form-control" id="thutu" name="thutu" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="mota" class="form-label">Mô tả khóa học</label>
+                            <textarea class="form-control" id="mota" name="mota" rows="3" maxlength="250"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Thêm khóa học</button>
+                            <a href="{% url 'manage-coures' %}" class="btn btn-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .content-container {
+        padding: 20px;
+    }
+    .page-title {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .card {
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    .card-body {
+        padding: 30px;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #555;
+    }
+    .form-control {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 8px 12px;
+    }
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    .btn {
+        padding: 8px 20px;
+        margin-right: 10px;
+    }
+</style>
+{% endblock main-Admin%} 

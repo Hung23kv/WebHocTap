@@ -1,7 +1,19 @@
 {% extends 'Base.html' %}
 
-{% block main-Admin%}
-    <div class="content-container">
-        <h1 class="page-title">Trang chủ</h1>
+{% block main %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Lecturer Dashboard</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="d-grid gap-3">
+                <a href="{% url 'manageLession' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-book"></i> Quản lý bài học
+                </a>
+                <a href="{% url 'track_students' %}" class="btn btn-info btn-lg">
+                    <i class="fas fa-users"></i> Theo dõi học viên
+                </a>
+            </div>
+        </div>
     </div>
-{% endblock main-Admin%}
+</div>
+{% endblock %}

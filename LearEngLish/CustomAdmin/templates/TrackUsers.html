@@ -1,0 +1,199 @@
+{% extends 'baseAdmin.html' %}
+{% block main-Admin%}
+<div class="content-container">
+    <h1 class="page-title">Theo Dõi Người Dùng</h1>
+    
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm theo tên hoặc email...">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User List -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr class="th-head">
+                    <th>STT</th>
+                    <th>Tên người dùng</th>
+                    <th>Email</th>
+                    <th>Ngày tham gia</th>
+                    <th>Khóa học hiện tại</th>
+                    <th>Điểm tổng</th>
+                    <th>Số từ đã học</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ user.ten }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.ngaytao|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if user.current_course %}
+                            {{ user.current_course.ten }}
+                        {% else %}
+                            Chưa tham gia
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.total_score %}
+                            {{ user.total_score }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.words_learned %}
+                            {{ user.words_learned }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#userDetailModal{{ user.id }}">
+                            <i class="fas fa-eye"></i> Chi tiết
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- User Detail Modal -->
+                <div class="modal fade" id="userDetailModal{{ user.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Chi tiết người dùng: {{ user.ten }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Thông tin cơ bản</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <th>Tên:</th>
+                                                <td>{{ user.ten }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Email:</th>
+                                                <td>{{ user.email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Ngày tham gia:</th>
+                                                <td>{{ user.ngaytao|date:"d/m/Y" }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Tiến độ học tập</h6>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <th>Khóa học hiện tại:</th>
+                                                <td>
+                                                    {% if user.current_course %}
+                                                        {{ user.current_course.ten }}
+                                                    {% else %}
+                                                        Chưa tham gia
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Điểm tổng:</th>
+                                                <td>{{ user.total_score|default:"0" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Số từ đã học:</th>
+                                                <td>{{ user.words_learned|default:"0" }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <h6 class="mt-4">Lịch sử học tập</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Khóa học</th>
+                                                <th>Điểm</th>
+                                                <th>Số từ đã học</th>
+                                                <th>Ngày học</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for progress in user.learning_progress %}
+                                            <tr>
+                                                <td>{{ progress.course_name }}</td>
+                                                <td>{{ progress.score }}</td>
+                                                <td>{{ progress.words_learned }}</td>
+                                                <td>{{ progress.date|date:"d/m/Y" }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .th-head {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+    .content-container {
+        padding: 20px;
+    }
+    .page-title {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .table {
+        margin-top: 20px;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .modal-lg {
+        max-width: 800px;
+    }
+</style>
+
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let searchText = this.value.toLowerCase();
+        let table = document.querySelector('table');
+        let rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            let name = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+            let email = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+            
+            if (name.includes(searchText) || email.includes(searchText)) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>
+{% endblock main-Admin%} 

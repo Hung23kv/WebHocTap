@@ -1,0 +1,212 @@
+{% extends 'Base.html' %}
+{% block main-Admin%}
+<div class="content-container">
+    <h1 class="page-title">Theo Dõi Học Viên</h1>
+    
+
+    <!-- Student List -->
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr class="th-head">
+                    <th>STT</th>
+                    <th>Tên học viên</th>
+                    <th>Email</th>
+                    <th>Ngày tham gia</th>
+                    <th>Khóa học hiện tại</th>
+                    <th>Điểm tổng</th>
+                    <th>Số từ đã học</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ student.ten }}</td>
+                    <td>{{ student.email }}</td>
+                    <td>{{ student.ngaytao|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if student.current_course %}
+                            {{ student.current_course.ten }}
+                        {% else %}
+                            Chưa tham gia
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.total_score %}
+                            {{ student.total_score }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if student.words_learned %}
+                            {{ student.words_learned }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#studentDetailModal{{ student.id }}">
+                            <i class="fas fa-eye"></i> Chi tiết
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Đưa các modal ra ngoài bảng -->
+{% for student in students %}
+<div class="modal fade" id="studentDetailModal{{ student.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết học viên: {{ student.ten }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Thông tin cơ bản</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Tên:</th>
+                                <td>{{ student.ten }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ student.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Ngày tham gia:</th>
+                                <td>{{ student.ngaytao|date:"d/m/Y" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Tiến độ học tập</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Khóa học hiện tại:</th>
+                                <td>
+                                    {% if student.current_course %}
+                                        {{ student.current_course.ten }}
+                                    {% else %}
+                                        Chưa tham gia
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Điểm tổng:</th>
+                                <td>{{ student.total_score|default:"0" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Số từ đã học:</th>
+                                <td>{{ student.words_learned|default:"0" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h6 class="mt-4">Lịch sử học tập</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Khóa học</th>
+                                <th>Điểm</th>
+                                <th>Số từ đã học</th>
+                                <th>Ngày học</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for progress in student.learning_progress %}
+                            <tr>
+                                <td>{{ progress.course_name }}</td>
+                                <td>{{ progress.score }}</td>
+                                <td>{{ progress.words_learned }}</td>
+                                <td>{{ progress.date|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h6 class="mt-4">Chi tiết bài học</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Bài học</th>
+                                <th>Điểm</th>
+                                <th>Ngày làm</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for lesson in student.lesson_progress %}
+                            <tr>
+                                <td>{{ lesson.lesson_name }}</td>
+                                <td>{{ lesson.score }}</td>
+                                <td>{{ lesson.date|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+    .th-head {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+    }
+    .content-container {
+        padding: 20px;
+    }
+    .page-title {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    .table {
+        margin-top: 20px;
+    }
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    .modal-lg {
+        max-width: 800px;
+    }
+</style>
+
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        let searchText = this.value.toLowerCase();
+        let table = document.querySelector('table');
+        let rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            let name = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+            let email = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+            
+            if (name.includes(searchText) || email.includes(searchText)) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+</script>
+{% endblock main-Admin%} 

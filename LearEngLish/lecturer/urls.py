@@ -12,4 +12,5 @@ urlpatterns = [
   path('manage-dialogue/<int:conversation_id>/', views.manage_dialogue, name='manage_dialogue'),
   path('delete-dialogue/<int:dialogue_id>/', views.delete_dialogue, name='delete-dialogue'),
   path('delete-vocab/<int:vocab_id>/', views.delete_vocab, name='delete-vocab'),
+  path('track-students/', views.track_students, name='track_students'),
 ]

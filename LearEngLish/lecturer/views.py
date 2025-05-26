@@ -1,26 +1,71 @@
 from django.shortcuts import render, get_object_or_404
-from chat.models import Khoahoc,Baihoc,Tuvung,Doithoai,Thoai
+from chat.models import Khoahoc,Baihoc,Tuvung,Doithoai,Thoai,Nguoidung,Tientrinh,Ontap
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.core.files.storage import FileSystemStorage
 import os
 from django.utils import timezone
 from home.views import nguoidung_dang_nhap
+from django.db.models import Sum, Count
 
 # Create your views here.
 def homeLecturer(request):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
-    if nguoidung.quyen != 'lecturer':
+    if nguoidung.quyen.strip() != 'lecturer':
         return redirect('dang_nhap')
     return render(request,'HomeLecturer.html')
+
+def track_students(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung or nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
+    # Get all students (users with role 'student')
+    students = Nguoidung.objects.filter(quyen='student')
+    
+    # Get learning progress for each student
+    for student in students:
+        # Get current course and total score
+        progress = Tientrinh.objects.filter(id_nguoidung=student).order_by('-diemtong').first()
+        if progress:
+            student.current_course = progress.id_khoahoc
+            student.total_score = progress.diemtong
+            student.words_learned = progress.tudahoc
+        else:
+            student.current_course = None
+            student.total_score = 0
+            student.words_learned = 0
+            
+        # Get learning history
+        student.learning_progress = []
+        progress_history = Tientrinh.objects.filter(id_nguoidung=student).order_by('-diemtong')
+        for p in progress_history:
+            student.learning_progress.append({
+                'course_name': p.id_khoahoc.ten,
+                'score': p.diemtong,
+                'words_learned': p.tudahoc,
+                'date': p.id_khoahoc.ngaytao
+            })
+            
+        # Get lesson progress
+        student.lesson_progress = []
+        lesson_history = Ontap.objects.filter(id_nguoidung=student).order_by('-ngaylam')
+        for l in lesson_history:
+            student.lesson_progress.append({
+                'lesson_name': l.id_baihoc.tieude,
+                'score': l.ketqua,
+                'date': l.ngaylam
+            })
+            
+    return render(request, 'TrackStudents.html', {'students': students})
 
 def manageLession(request):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
-    if nguoidung.quyen != 'lecturer':
+    if nguoidung.quyen.strip() != 'lecturer':
         return redirect('dang_nhap')
     coures = Khoahoc.objects.all()
     context = {
@@ -37,8 +82,14 @@ def manageLession(request):
                 "listLession": lessons
             })
     return render(request,'ManageLession.html',context)
-def manage_vocab(request, lesson_id):
 
+def manage_vocab(request, lesson_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     lesson = Baihoc.objects.get(id=lesson_id)
     vocab_list = Tuvung.objects.filter(id_baihoc=lesson)
     
@@ -94,6 +145,12 @@ def manage_vocab(request, lesson_id):
     return render(request, 'manage_vocab.html', {'lesson': lesson, 'vocab_list': vocab_list})
 
 def add_vocab(request, lesson_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     lesson = Baihoc.objects.get(id=lesson_id)
     
     if request.method == 'POST':
@@ -131,6 +188,12 @@ def add_vocab(request, lesson_id):
     return render(request, 'add_vocab.html', {'lesson': lesson})
 
 def add_lesson(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     course_id = request.GET.get('course_id')
     if course_id:
         course = Khoahoc.objects.get(id=course_id)
@@ -165,12 +228,18 @@ def manage_conversation(request):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
-    if nguoidung.quyen != 'lecturer':
+    if nguoidung.quyen.strip() != 'lecturer':
         return redirect('dang_nhap')
     conversations = Doithoai.objects.exclude(muctieu='Trò chuyện')
     return render(request, 'manage_conversation.html', {'conversations': conversations})
 
 def add_conversation(request):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     if request.method == 'POST':
         try:
             tieude = request.POST.get('tieude')
@@ -187,7 +256,6 @@ def add_conversation(request):
                 tieude=tieude,
                 muctieu=muctieu,
                 hinhanh=hinhanh,
-                # nguoitao=request.user  # Giả sử đã có user đăng nhập
             )
             return redirect('manage-conversation')
         except Exception as e:
@@ -199,8 +267,9 @@ def manage_dialogue(request, conversation_id):
     nguoidung = nguoidung_dang_nhap(request)
     if not nguoidung:
         return redirect('dang_nhap')
-    if nguoidung.quyen != 'lecturer':
+    if nguoidung.quyen.strip() != 'lecturer':
         return redirect('dang_nhap')
+        
     conversation = Doithoai.objects.get(id=conversation_id)
     dialogues = Thoai.objects.filter(id_doithoai=conversation)
     
@@ -247,12 +316,24 @@ def manage_dialogue(request, conversation_id):
     })
 
 def delete_dialogue(request, dialogue_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     dialogue = get_object_or_404(Thoai, id=dialogue_id)
     conversation_id = dialogue.id_doithoai.id
     dialogue.delete()
     return redirect('manage_dialogue', conversation_id=conversation_id)
 
 def delete_vocab(request, vocab_id):
+    nguoidung = nguoidung_dang_nhap(request)
+    if not nguoidung:
+        return redirect('dang_nhap')
+    if nguoidung.quyen.strip() != 'lecturer':
+        return redirect('dang_nhap')
+        
     vocab = get_object_or_404(Tuvung, id=vocab_id)
     lesson_id = vocab.id_baihoc.id
     
@@ -264,3 +345,4 @@ def delete_vocab(request, vocab_id):
     
     vocab.delete()
     return redirect('manage_vocab', lesson_id=lesson_id)
+
